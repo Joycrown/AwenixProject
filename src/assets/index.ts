@@ -17,7 +17,7 @@ import groupmail from "./landing/Group 2.svg";
 import eggsImage from "./eggs.png";
 import chicksSlide from "./chick slide.png";
 import signSlide from "./sign side.png";
-
+import footerqrimg from "./footerqrimg.svg";
 // Contact
 import map from "./map.png";
 
@@ -37,5 +37,5 @@ export {
   map,
 
   //Icons
-  googleIcon
+  googleIcon, footerqrimg
 }
