@@ -29,11 +29,11 @@ function Sign() {
   }, [navigate, pathname]);
 
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1 sm:min-h-[85vh]">
       <div className="w-1/2 max-md:hidden">
         <img className="h-full w-full" src={images[currentImage]} alt="Sign" />
       </div>
-      <div className="flex-1 px-8 lg:px-12">
+      <div className="flex-1 px-8 lg:px-12 pt-8 pb-16">
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
