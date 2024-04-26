@@ -12,7 +12,7 @@ import limestone from "./landing/limestone.png";
 import mill from "./landing/mill.png";
 import groupfeed from "./landing/Group 1.svg";
 import groupmail from "./landing/Group 2.svg";
-
+import footerqrimg from "./footerqrimg.svg";
 // Contact
 import map from "./map.png";
 
@@ -25,5 +25,5 @@ export {
   mashD, mashM, concentrate, maize, limestone, mill, groupfeed, groupmail,
 
   //Contact
-  map
+  map, footerqrimg
 }
