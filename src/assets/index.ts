@@ -13,10 +13,16 @@ import mill from "./landing/mill.png";
 import groupfeed from "./landing/Group 1.svg";
 import groupmail from "./landing/Group 2.svg";
 
+// Sign 
+import eggsImage from "./eggs.png";
+import chicksSlide from "./chick slide.png";
+import signSlide from "./sign side.png";
+
 // Contact
 import map from "./map.png";
 
-
+//Icons
+import googleIcon from "./icons/google.svg"
 
 export {
   logo, hero, chicks, broilers,
@@ -24,6 +30,12 @@ export {
   //Landing
   mashD, mashM, concentrate, maize, limestone, mill, groupfeed, groupmail,
 
+  //Sign
+  eggsImage, chicksSlide, signSlide,
+
   //Contact
-  map
+  map,
+
+  //Icons
+  googleIcon
 }

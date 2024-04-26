@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 const DefaultRoutes = lazy(() => import("./layout/defaultRoutes"));
 
 // Routes
-import { AboutPage, ContactPage, LandingPage } from "./pages";
+import { AboutPage, ContactPage, LandingPage, SignPage } from "./pages";
 import RouteIdentifier from "./layout/routeIdentifier";
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact-us" element={<ContactPage />} />
+            <Route path="/account/*" element={<SignPage />} />
           </Route>
         </Route>
       </Routes>

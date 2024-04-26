@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 function DefaultRoutes() {
   return (
-    <main>
+    <main className="flex flex-col min-h-screen">
       <Header />
       <Suspense>
         <Outlet />
