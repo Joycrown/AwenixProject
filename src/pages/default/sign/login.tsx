@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { googleIcon } from "../../../assets";
 
 function Login() {
@@ -8,11 +8,13 @@ function Login() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
     console.log("Submitting");
+    navigate("/protected/home");
   };
 
   const handleSignIn = () => {
