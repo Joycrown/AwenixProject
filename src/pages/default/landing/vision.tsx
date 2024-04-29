@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { groupfeed, groupmail, mill } from "../../assets";
+import { grains, groupfeed, groupmail } from "../../assets";
 import SectionHead from "../../components/sectionHead";
 
 function VisionSection() {
@@ -21,7 +21,7 @@ function VisionSection() {
         <SectionHead position="left" name="our vision" />
         <div className="flex gap-8 lg:gap-24">
           <div className="w-5/12 max-sm:hidden">
-            <img src={mill} alt="Our vision - Awenix mill" />
+            <img src={grains} alt="Our vision - Awenix mill" />
           </div>
           <div className="flex-1 space-y-3">
             <h2 className="font-semibold">
@@ -48,7 +48,7 @@ function VisionSection() {
             </div>
 
             <div className="sm:hidden pb-10">
-              <img src={mill} alt="Our vision - Awenix mill" />
+              <img src={grains} alt="Our vision - Awenix mill" />
             </div>
 
             <Link

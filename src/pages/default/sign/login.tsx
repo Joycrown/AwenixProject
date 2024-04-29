@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { googleIcon } from "../../assets";
+import { googleIcon } from "../../../assets";
 
 function Login() {
   const [details, setDetails] = useState({

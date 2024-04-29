@@ -6,7 +6,12 @@ function RouteIdentifier() {
 
   useEffect(() => {
     let routeName = pathname.split("/")[1];
-    routeName = routeName === "" ? "Home" : routeName;
+    routeName =
+      routeName === ""
+        ? "Home"
+        : routeName === "protected"
+        ? "account"
+        : routeName;
 
     const title = routeName.charAt(0).toUpperCase() + routeName.slice(1);
 

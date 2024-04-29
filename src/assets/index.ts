@@ -1,15 +1,16 @@
 import logo from "./logo.png";
-import hero from "./hero.png";
+import grains from "./grains.png";
 import chicks from "./chicks.png";
 import broilers from "./broilers.png";
 
 // Landing
-import mashD from "./landing/mash-d.png";
-import mashM from "./landing/mash-m.png";
-import concentrate from "./landing/concentrate.png";
-import maize from "./landing/maize.png";
-import limestone from "./landing/limestone.png";
+import mash from "./ingredients/mash.png"
+import maize from "./ingredients/maize seed.png";
+import soya from "./ingredients/soya beans.png";
+import wheat from "./ingredients/wheat.png";
+import limestone from "./ingredients/limestone.png";
 import mill from "./landing/mill.png";
+import hero from "./landing/mill 1.png";
 import groupfeed from "./landing/Group 1.svg";
 import groupmail from "./landing/Group 2.svg";
 
@@ -25,10 +26,10 @@ import map from "./map.png";
 import googleIcon from "./icons/google.svg"
 
 export {
-  logo, hero, chicks, broilers,
+  logo, grains, chicks, broilers,
   
   //Landing
-  mashD, mashM, concentrate, maize, limestone, mill, groupfeed, groupmail,
+  mash, hero, soya, wheat, maize, limestone, mill, groupfeed, groupmail,
 
   //Sign
   eggsImage, chicksSlide, signSlide,

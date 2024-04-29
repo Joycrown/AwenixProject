@@ -1,4 +1,4 @@
-import SectionHead from "../../components/sectionHead";
+import SectionHead from "../../../components/sectionHead";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdOutlineHeadphones } from "react-icons/md";
 import { GoShieldCheck } from "react-icons/go";

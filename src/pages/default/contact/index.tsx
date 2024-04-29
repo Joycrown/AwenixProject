@@ -24,10 +24,6 @@ function ContactPage() {
           <h1 className="font-bold">
             Get in <span className="text-default-400">Touch</span>
           </h1>
-          <p>
-            Enim tempor eget pharetra facilisis sed maecenas adipiscing. Eu leo
-            molestie vel, ornare non id blandit netus.
-          </p>
 
           <div className="md:hidden">
             <ContactInfo />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { chicksSlide, eggsImage, signSlide } from "../../assets";
+import { chicksSlide, eggsImage, signSlide } from "../../../assets";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Login from "./login";
 import Register from "./register";

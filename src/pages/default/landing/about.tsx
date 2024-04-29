@@ -3,13 +3,13 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 
-import SectionHead from "../../components/sectionHead";
+import SectionHead from "../../../components/sectionHead";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-import { broilers, chicks } from "../../assets";
+import { broilers, chicks } from "../../../assets";
 
 function AboutSection() {
   const slides = [
@@ -96,6 +96,7 @@ function AboutSection() {
               </div>
               <div className="relative w-full flex items-end">
                 <img
+                  className="my-0"
                   src={
                     slide.title === "Grower/Broiler Mesh Feed"
                       ? broilers
