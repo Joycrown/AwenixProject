@@ -9,7 +9,7 @@ function HeroSection() {
         <span className="text-5xl my-auto">Customize your feed percentage</span>
         <Link
           to="#"
-          className="py-3 border-b-2 border-white w-fit flex items-center gap-2"
+          className="py-3 px-6 border-2 border-white w-fit flex items-center gap-2"
         >
           Explore
         </Link>

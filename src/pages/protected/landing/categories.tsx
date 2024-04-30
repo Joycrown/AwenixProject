@@ -15,14 +15,14 @@ function CategoriesSection() {
 
       <h3 className="font-medium">Browse By Category</h3>
 
-      <div className="flex gap-3 mx-auto w-fit">
+      <div className="flex overflow-x-auto gap-3 mx-auto w-full md:w-fit pb-2">
         {categories.map((category, id) => (
           <div
             key={category.name + id}
-            className="border px-6 py-8 text-center flex flex-col gap-4 items-center justify-center capitalize"
+            className="border min-w-[160px] px-4 md:px-6 py-8 text-center flex flex-col gap-4 items-center justify-center capitalize"
           >
             {category.icon}
-            <p>{category.name}</p>
+            <p className="truncate">{category.name}</p>
           </div>
         ))}
       </div>

@@ -8,14 +8,7 @@ interface productCardProps {
   discount: number;
   rating: number;
 }
-function ProductCard({
-  name,
-  image,
-  stock,
-  price,
-  discount,
-  rating,
-}: productCardProps) {
+function ProductCard({ name, image, stock, price, rating }: productCardProps) {
   return (
     <div className="space-y-4">
       <div className="bg-default-700 bg-opacity-50 rounded overflow-hidden">
@@ -23,7 +16,7 @@ function ProductCard({
       </div>
       <div className="space-y-1">
         <h4>{name}</h4>
-        <div className="flex gap-1 items-start text-sm">
+        <div className="flex flex-wrap gap-1 items-start text-sm">
           <span className="text-default-400">N {price}</span>
           <div className="flex">
             {new Array(5).fill("").map((_, id) => (

@@ -8,7 +8,7 @@ function ProductSection() {
     <div className="space-y-4">
       <SectionHead name="our products" position="left" />
       <h3 className="font-medium">Explore Our Products</h3>
-      <div className="grid grid-cols-3 md:grid-cols-4">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
         {products.slice(0, 8).map((product, id) => (
           <ProductCard key={id} {...product} />
         ))}

@@ -1,3 +1,4 @@
+import BlogSection from "./blog";
 import CategoriesSection from "./categories";
 import HeroSection from "./hero";
 import ProductSection from "./products";
@@ -8,6 +9,7 @@ function HomePage() {
       <HeroSection />
       <CategoriesSection />
       <ProductSection />
+      <BlogSection />
     </section>
   );
 }
