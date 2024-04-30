@@ -92,5 +92,11 @@ export const blogs = [
     body: "Poultry litter may present significant savings to producers if they manage it correctly. <ul><li>Soy bean Benefits</li><li>Handling Tip</li><li>Nutrient concentration value</li><li>Reliable & experienced staffs</li><ul>",
     date: "March 15, 2024",
     image: signSlide
+  },
+  {
+    heading: "Straight scoop on poultry liter fertilizer",
+    body: "Poultry litter may present significant savings to producers if they manage it correctly. <ul><li>Soy bean Benefits</li><li>Handling Tip</li><li>Nutrient concentration value</li><li>Reliable & experienced staffs</li><ul>",
+    date: "March 15, 2024",
+    image: signSlide
   }
 ]

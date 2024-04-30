@@ -52,6 +52,12 @@ article p ul {
   margin: 1em
 }
 
+.article .swiper {
+  padding-bottom: 10px;
+  --swiper-navigation-size: 20px;
+  --swiper-navigation-color: red;
+}
+
 @media only screen and (max-width: 485px) {
   :root {
     font-size: 12px;

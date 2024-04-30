@@ -1,13 +1,18 @@
-import { BiPhone } from "react-icons/bi";
+import { IoPhonePortraitOutline } from "react-icons/io5";
+import { SlScreenDesktop } from "react-icons/sl";
+import { TbDeviceWatch } from "react-icons/tb";
+import { CiCamera } from "react-icons/ci";
+import { VscGame } from "react-icons/vsc";
+
 import SectionHead from "../../../components/sectionHead";
 
 function CategoriesSection() {
   const categories = [
-    { name: "starter feed", icon: <BiPhone /> },
-    { name: "grower mesh feed", icon: <BiPhone /> },
-    { name: "broiler mesh feed", icon: <BiPhone /> },
-    { name: "layer feed", icon: <BiPhone /> },
-    { name: "custom order", icon: <BiPhone /> },
+    { name: "starter feed", icon: IoPhonePortraitOutline },
+    { name: "grower mesh feed", icon: SlScreenDesktop },
+    { name: "broiler mesh feed", icon: TbDeviceWatch },
+    { name: "layer feed", icon: CiCamera },
+    { name: "custom order", icon: VscGame },
   ];
   return (
     <div className="space-y-4">
@@ -21,7 +26,7 @@ function CategoriesSection() {
             key={category.name + id}
             className="border min-w-[160px] px-4 md:px-6 py-8 text-center flex flex-col gap-4 items-center justify-center capitalize"
           >
-            {category.icon}
+            <category.icon size="1.5rem" />
             <p className="truncate">{category.name}</p>
           </div>
         ))}
