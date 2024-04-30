@@ -7,12 +7,12 @@ function VisionSection() {
     {
       img: groupfeed,
       title: "Organic Feed Only",
-      text: "Simply dummy text of the printing and typesetting industry. Lorem Ipsum",
+      text: "Our ingredients are sourced sustainably and free from harmful additives, ensuring your animals get the best possible nutrition to thrive.",
     },
     {
       img: groupmail,
       title: "Quality Standards",
-      text: "Simply dummy text of the printing and typesetting industry. Lorem Ipsum",
+      text: "We understand the importance of raising healthy livestock and poultry, and we're committed to sourcing for the best ",
     },
   ];
   return (
@@ -28,9 +28,9 @@ function VisionSection() {
               We Believe in Healthy Practices For Growth
             </h2>
             <p className="text-default-300 text-sm">
-              Simply dummy text of the printing and typesetting industry. Lorem
-              had ceased to been the industry's standard dummy text ever since
-              the 1500s, when an unknown printer took a galley.
+              At Awenix, you get the results you deserve with our unmatched
+              knowledge and experience. Your success is our priority, choose a
+              partner you can trust
             </p>
 
             <div className="space-y-4 py-6">
