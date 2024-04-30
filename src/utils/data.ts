@@ -30,13 +30,6 @@ export const ingredientsItems = [
   textColor: "white"
 },
 {
-  bgColor: "#000000",
-  image: mash,
-  headerText: "Mash",
-  body: "Mash is a form of a complete feed that is finely ground and mixed so that birds cannot easily separate out ingredients; each mouthful provides a well-balanced diet. Mash diet gives greater unification of growth and less death loss and is more economical.\n It’s maid from crushed grains and mixed with protein powders and supplements. The powder protein in the mash is a fine, almost powdery mixture.  \n No additional heat- or compaction treatments are conducted on the feed; hence, energy expenditure to prepare the feed is low compared to pellets and extruded feed. On the other hand, segregation of raw materials often occurs due to transport and handling. \n This may impair the nutritional quality of the feed, especially individual insect feed intake, where absolute feed intake per individual is low. Pelleting is the most common feed manufacturing operation.",
-  textColor: "white"
-},
-{
   bgColor: "#DB8E8E",
   image: limestone,
   headerText: "Limestone",

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { grains, groupfeed, groupmail } from "../../assets";
-import SectionHead from "../../components/sectionHead";
+import { grains, groupfeed, groupmail } from "../../../assets";
+import SectionHead from "../../../components/sectionHead";
 
 function VisionSection() {
   const standards = [

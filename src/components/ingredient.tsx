@@ -27,11 +27,11 @@ function Ingredient({
         <p
           className="text-base"
           dangerouslySetInnerHTML={{
-            __html: body.replaceAll("\n", "<br /><br />"),
+            __html: body.split("\n").join("<br /><br />"),
           }}
         />
       </div>
-      <div className="w-full">
+      <div className="w-full max-sm:hidden">
         <img src={image} alt={headerText} />
       </div>
     </div>
