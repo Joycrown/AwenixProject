@@ -14,7 +14,7 @@ function BlogSection() {
     <div className="space-y-4">
       <SectionHead name="blogs" position="left" />
       <h3 className="font-medium">Latest News Headlines</h3>
-      <div className="article overflow-hidden max-w-[1200px] mx-auto">
+      <div className="article relative max-w-[1200px] mx-auto select-none">
         <Swiper
           // install Swiper modules
           modules={[Navigation, Scrollbar]}
@@ -25,7 +25,7 @@ function BlogSection() {
           pagination={{ clickable: true }}
           slidePrevClass="resizeable-slide"
           slideNextClass="resizeable-slide"
-          className="rounded-md w-full relative"
+          className="rounded-md w-full"
         >
           {blogs.map(({ image, heading, body, date }, id) => (
             <SwiperSlide key={heading + id} className="relative">

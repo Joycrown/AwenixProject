@@ -53,9 +53,17 @@ article p ul {
 }
 
 .article .swiper {
+  position: static;
   padding-bottom: 10px;
   --swiper-navigation-size: 20px;
   --swiper-navigation-color: red;
+  --swiper-navigation-sides-offset: -20px;
+}
+
+.article .swiper-horizontal>.swiper-scrollbar,
+.swiper-scrollbar.swiper-scrollbar-horizontal {
+  position: relative;
+  margin-top: 7px;
 }
 
 @media only screen and (max-width: 485px) {
