@@ -17,7 +17,7 @@ function HeroSection() {
             birds, broilers, and starters.
           </p>
           <Link
-            to="/register"
+            to="/account/register"
             className="py-3 px-6 border-2 border-white w-fit rounded block"
           >
             Shop now

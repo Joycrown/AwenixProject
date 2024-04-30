@@ -52,7 +52,7 @@ function VisionSection() {
             </div>
 
             <Link
-              to="/register"
+              to="/account/register"
               className="py-3 px-6 bg-default-500 text-white w-fit rounded block max-sm:mx-auto"
             >
               Shop now

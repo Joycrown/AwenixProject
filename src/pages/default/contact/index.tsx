@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { map } from "../../assets";
+import { map } from "../../../assets";
 import ContactInfo from "./contactInfo";
 
 function ContactPage() {
