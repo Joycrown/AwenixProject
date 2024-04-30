@@ -21,7 +21,7 @@ function BlogSection() {
           navigation={true}
           scrollbar={true}
           slidesPerView={1.35}
-          spaceBetween="35"
+          spaceBetween="15"
           pagination={{ clickable: true }}
           slidePrevClass="resizeable-slide"
           slideNextClass="resizeable-slide"
@@ -29,26 +29,28 @@ function BlogSection() {
         >
           {blogs.map(({ image, heading, body, date }, id) => (
             <SwiperSlide key={heading + id} className="relative">
-              <article className="flex gap-4">
+              <article className="flex gap-4 max-sm:flex-col">
                 <div className="max-h-[200px] max-w-[450px] overflow-hidden relative cursor-pointer group">
                   <div className="absolute bg-black bg-opacity-0 w-full h-full text-white flex items-center justify-center text-xs invisible duration-300 group-hover:bg-opacity-80 group-hover:visible">
                     Read more
                   </div>
                   <img src={image} alt={heading} />
                 </div>
-                <div className="text-center">
-                  <img className="w-10" src={calendarIcon} alt={date} />
-                  <p className="font-semibold text-lg mt-2">
-                    {new Date(date).getFullYear()}
-                  </p>
-                  <p className="text-xs">March</p>
-                </div>
-                <div className="pl-4 border-l space-y-4">
-                  <h4 className="text-lg font-medium">{heading}</h4>
-                  <p
-                    className="text-xs line-clamp-6"
-                    dangerouslySetInnerHTML={{ __html: body }}
-                  />
+                <div className="flex gap-4">
+                  <div className="text-center">
+                    <img className="w-10" src={calendarIcon} alt={date} />
+                    <p className="font-semibold text-lg mt-2">
+                      {new Date(date).getFullYear()}
+                    </p>
+                    <p className="text-xs">March</p>
+                  </div>
+                  <div className="pl-4 border-l space-y-4">
+                    <h4 className="text-lg font-medium">{heading}</h4>
+                    <p
+                      className="text-xs line-clamp-6"
+                      dangerouslySetInnerHTML={{ __html: body }}
+                    />
+                  </div>
                 </div>
               </article>
             </SwiperSlide>
