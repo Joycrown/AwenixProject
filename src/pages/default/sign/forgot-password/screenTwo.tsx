@@ -28,7 +28,6 @@ function ScreenTwo() {
         className="border-b px-2 py-3 outline-none"
         value={code}
         onChange={(e) => setCode(e.target.value)}
-        onInput={(e) => setCode(e.currentTarget.value)}
         required
       />
 

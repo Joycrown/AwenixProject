@@ -36,9 +36,6 @@ function Register() {
         onChange={(e) =>
           setDetails((prev) => ({ ...prev, name: e.target.value }))
         }
-        onInput={(e) =>
-          setDetails((prev) => ({ ...prev, name: e.currentTarget.value }))
-        }
         required
       />
 
@@ -49,9 +46,6 @@ function Register() {
         value={details.email}
         onChange={(e) =>
           setDetails((prev) => ({ ...prev, email: e.target.value }))
-        }
-        onInput={(e) =>
-          setDetails((prev) => ({ ...prev, email: e.currentTarget.value }))
         }
         required
       />
@@ -64,9 +58,6 @@ function Register() {
         value={details.password}
         onChange={(e) =>
           setDetails((prev) => ({ ...prev, password: e.target.value }))
-        }
-        onInput={(e) =>
-          setDetails((prev) => ({ ...prev, password: e.currentTarget.value }))
         }
         required
       />

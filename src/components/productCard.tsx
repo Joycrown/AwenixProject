@@ -22,6 +22,7 @@ function ProductCard({ name, image, stock, price, rating }: productCardProps) {
             {new Array(5).fill("").map((_, id) => (
               <MdStar
                 size="1rem"
+                key={name + id}
                 className={
                   id + 1 <= rating ? "text-orange-500" : "text-default-700"
                 }

@@ -76,7 +76,7 @@ function AboutSection() {
               key={slide.title + slide.id}
               className="relative rounded-md min-h-[300px] md:min-h-[400px] !flex items-stretch text-white"
             >
-              <div className="flex flex-col p-6 md:p-12 w-full capitalize relative z-10 max-md:mb-10">
+              <div className="flex flex-col p-6 md:p-12 w-full capitalize relative z-10 max-sm:mb-10">
                 <p
                   className={
                     slide.title === "Grower/Broiler Mesh Feed"
@@ -94,7 +94,7 @@ function AboutSection() {
                   Shop now <IoIosArrowRoundForward size="1.2rem" />
                 </Link>
               </div>
-              <div className="relative w-full flex items-end">
+              <div className="max-sm:hidden relative w-full flex items-end">
                 <img
                   className="my-0"
                   src={

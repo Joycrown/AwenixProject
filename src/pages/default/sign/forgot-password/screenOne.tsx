@@ -28,7 +28,6 @@ function ScreenOne() {
         className="border-b px-2 py-3 outline-none"
         value={mail}
         onChange={(e) => setMail(e.target.value)}
-        onInput={(e) => setMail(e.currentTarget.value)}
         required
       />
 

@@ -37,9 +37,6 @@ function Login() {
         onChange={(e) =>
           setDetails((prev) => ({ ...prev, email: e.target.value }))
         }
-        onInput={(e) =>
-          setDetails((prev) => ({ ...prev, email: e.currentTarget.value }))
-        }
         required
       />
 
@@ -51,9 +48,6 @@ function Login() {
         value={details.password}
         onChange={(e) =>
           setDetails((prev) => ({ ...prev, password: e.target.value }))
-        }
-        onInput={(e) =>
-          setDetails((prev) => ({ ...prev, password: e.currentTarget.value }))
         }
         required
       />

@@ -36,9 +36,6 @@ function ContactPage() {
               onChange={(e) =>
                 setContact((prev) => ({ ...prev, name: e.target.value }))
               }
-              onInput={(e) =>
-                setContact((prev) => ({ ...prev, name: e.currentTarget.value }))
-              }
               required
             />
             <input
@@ -49,9 +46,6 @@ function ContactPage() {
               onChange={(e) =>
                 setContact((prev) => ({ ...prev, mail: e.target.value }))
               }
-              onInput={(e) =>
-                setContact((prev) => ({ ...prev, mail: e.currentTarget.value }))
-              }
             />
 
             <input
@@ -59,12 +53,6 @@ function ContactPage() {
               placeholder="Phone number*"
               type="tel"
               value={contact.phone}
-              onInput={(e) =>
-                setContact((prev) => ({
-                  ...prev,
-                  phone: e.currentTarget.value,
-                }))
-              }
               onChange={(e) =>
                 setContact((prev) => ({ ...prev, phone: e.target.value }))
               }

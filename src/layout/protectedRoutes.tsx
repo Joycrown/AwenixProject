@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthContext } from "../utils/authContextProvider";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 
@@ -14,9 +14,7 @@ function ProtectedRoutes() {
   return (
     <main className="flex flex-col min-h-screen">
       <Header />
-      <Suspense>
-        <Outlet />
-      </Suspense>
+      <Outlet />
       <Footer />
     </main>
   );

@@ -29,7 +29,6 @@ function ScreenThree() {
         className="border-b px-2 py-3 outline-none"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        onInput={(e) => setPassword(e.currentTarget.value)}
         required
       />
 

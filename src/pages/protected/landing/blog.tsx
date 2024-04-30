@@ -20,21 +20,27 @@ function BlogSection() {
           modules={[Navigation, Scrollbar]}
           navigation={true}
           scrollbar={true}
-          slidesPerView={1.35}
           spaceBetween="15"
           pagination={{ clickable: true }}
-          slidePrevClass="resizeable-slide"
-          slideNextClass="resizeable-slide"
+          slidesPerView={1.15}
+          breakpoints={{
+            786: {
+              slidesPerView: 1.25,
+            },
+            1024: {
+              slidesPerView: 1.35,
+            },
+          }}
           className="rounded-md w-full"
         >
           {blogs.map(({ image, heading, body, date }, id) => (
             <SwiperSlide key={heading + id} className="relative">
               <article className="flex gap-4 max-sm:flex-col">
-                <div className="max-h-[200px] max-w-[450px] overflow-hidden relative cursor-pointer group">
+                <div className="max-h-[200px] sm:max-w-[450px] overflow-hidden relative cursor-pointer group">
                   <div className="absolute bg-black bg-opacity-0 w-full h-full text-white flex items-center justify-center text-xs invisible duration-300 group-hover:bg-opacity-80 group-hover:visible">
                     Read more
                   </div>
-                  <img src={image} alt={heading} />
+                  <img className="w-full" src={image} alt={heading} />
                 </div>
                 <div className="flex gap-4">
                   <div className="text-center">
