@@ -25,7 +25,9 @@ import map from "./map.png";
 //Icons
 import googleIcon from "./icons/google.svg"
 import calendarIcon from "./icons/calendar.svg"
-
+//App Store buttons
+import appstore from '../assets/appStore.svg'
+import playstorebtn from './playstorebtn.svg'
 export {
   logo, grains, chicks, broilers,
   
@@ -39,5 +41,7 @@ export {
   map,
 
   //Icons
-  googleIcon, footerqrimg, calendarIcon
+  googleIcon, footerqrimg, calendarIcon,
+  //App store buttons
+  appstore, playstorebtn
 }

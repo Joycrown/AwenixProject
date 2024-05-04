@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
 import { VscSend } from "react-icons/vsc";
-import { footerqrimg } from '../assets';
+import { footerqrimg, appstore, playstorebtn } from '../assets';
 import { IoLogoGooglePlaystore } from "react-icons/io5";
 import { IoLogoApple } from "react-icons/io5";
 import { RiFacebookLine } from "react-icons/ri";
@@ -62,16 +62,15 @@ function Footer() {
             <div className="w-1/2">
               <img className="w-auto  h-auto bg-default-800" src={footerqrimg} alt="QR Image" />
             </div>
-            <div className="flex flex-col gap-3 w-1/2 ">
-              <button className="flex items-center border-default-800 border-2 p-1.5 w-52 h-auto rounded-lg">
-                <IoLogoGooglePlaystore className="text-default-800 text-4xl rounded" />
-                <span className="text-default-800 text-center text-sm px-4">Get it on <br /><span className="font-bold text-xl text-center ">Google Play</span></span>
-              </button>
-              <button className="flex items-center border-default-800 border-2 p-1.5 w-52 rounded-lg">
-                <IoLogoApple className="text-default-800 text-4xl rounded" />
-                <span className="text-default-800 text-center text-sm px-4">Download on the <br /><span className="font-bold text-xl text-center ">App Store</span></span>
-              </button>
-            </div>
+            <div className="flex flex-col w-1/2">
+  <button className="flex items-center justify-center h-1/2 border-none bg-transparent outline-none">
+    <img className="h-full w-full" src={playstorebtn} alt="Play Store button"/>
+  </button>
+  <button className="flex items-center justify-center h-1/2 border-none bg-transparent outline-none">
+    <img className="h-full w-full" src={appstore} alt="App Store button"/>
+  </button>
+</div>
+
           </div>
           <div className="flex justify-between max-md:w-4/5 md:w-full">
             <Link to=""><RiFacebookLine className="text-default-800 text-4xl rounded" /></Link>
