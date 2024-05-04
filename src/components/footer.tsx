@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom'
 import { VscSend } from "react-icons/vsc";
 import { footerqrimg, appstore, playstorebtn } from '../assets';
-import { IoLogoGooglePlaystore } from "react-icons/io5";
-import { IoLogoApple } from "react-icons/io5";
 import { RiFacebookLine } from "react-icons/ri";
 import { SlSocialTwitter } from "react-icons/sl";
 import { FaInstagram } from "react-icons/fa";
