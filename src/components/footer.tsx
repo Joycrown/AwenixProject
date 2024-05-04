@@ -19,14 +19,14 @@ function Footer() {
 
   return (
     <footer className="flex flex-col">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-9 lg:flex justify-center bg-default-100">
+      <div className="grid grid-cols-1 md:grid-cols-2 md:pl-9 gap-9 lg:flex justify-center bg-default-100">
         <div className="flex flex-col py-14 max-md:items-center">
           <h3 className="text-default-800 text-2xl font-bold py-3">Awenix Farm Nigeria</h3>
           <p className="text-default-800 text-base py-3">Subscribe</p>
           <span className="text-default-800 text-base py-2">Get 10% off your first order</span>
           <form className="relative py-3">
             <input className="bg-default-100 max-md:w-full border-default-800 border-2 placeholder:text-default-300 placeholder:px-1 p-2 outline-none text-default-800 rounded w-4/5" type="email" placeholder="Enter your email" value={email} onChange={handleChange} />
-            <VscSend className="text-2xl text-default-800 absolute max-md:right-[1rem] top-5 right-[4.8rem] cursor-pointer hover:text-default-800" />
+            <VscSend className="text-2xl text-default-800 absolute max-md:right-[1rem] top-5 right-[4.8rem] max-lg:right-[6rem] cursor-pointer hover:text-default-800" />
           </form>
         </div>
 
@@ -59,7 +59,7 @@ function Footer() {
           <p className="text-default-800">Save $3 with App New Users Only</p>
 
           <div className="flex p-2 gap-3 pt-3  max-md:items-center">
-            <div className="container w-1/2 m-0">
+            <div className="w-1/2">
               <img className="w-auto  h-auto bg-default-800" src={footerqrimg} alt="QR Image" />
             </div>
             <div className="flex flex-col gap-3 w-1/2 ">
