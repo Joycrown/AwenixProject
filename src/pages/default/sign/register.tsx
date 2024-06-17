@@ -1,19 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { googleIcon } from "../../../assets";
+import { toast } from "react-toastify";
 
 function Register() {
   const [details, setDetails] = useState({
     name: "",
     email: "",
     password: "",
+    phone: "",
   });
+  const navigate = useNavigate();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
-    console.log("Submitting");
+    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
+    const body = {
+      name: details.name,
+      password: details.password,
+      email: details.email,
+      phone_no: details.phone,
+    };
+
+    axios
+      .post(`${endpoint}/signup`, body)
+      .then(() => {
+        toast.success("Account Successfully, log in...");
+        setTimeout(() => {
+          navigate("/account/login");
+        }, 2000);
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleSignUp = () => {
@@ -39,13 +59,25 @@ function Register() {
         required
       />
 
-      {/* Email address or Phone number */}
+      {/* Email address */}
       <input
-        placeholder="Email or Phone number"
+        type="email"
+        placeholder="Email address"
         className="border-b px-2 py-3 outline-none"
         value={details.email}
         onChange={(e) =>
           setDetails((prev) => ({ ...prev, email: e.target.value }))
+        }
+        required
+      />
+
+      {/* Phone number */}
+      <input
+        placeholder="Phone number"
+        className="border-b px-2 py-3 outline-none"
+        value={details.phone}
+        onChange={(e) =>
+          setDetails((prev) => ({ ...prev, phone: e.target.value }))
         }
         required
       />

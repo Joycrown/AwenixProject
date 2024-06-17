@@ -5,10 +5,10 @@ import ProductCard from "../../../components/productCard";
 
 function ProductSection() {
   return (
-    <div className="space-y-4">
+    <section id="products" className="space-y-4">
       <SectionHead name="our products" position="left" />
       <h3 className="font-medium">Explore Our Products</h3>
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {products.slice(0, 8).map((product, id) => (
           <ProductCard key={id} {...product} />
         ))}
@@ -20,7 +20,7 @@ function ProductSection() {
       >
         View all products
       </Link>
-    </div>
+    </section>
   );
 }
 

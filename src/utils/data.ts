@@ -42,34 +42,27 @@ export const products = [
   {
     name: "Wheat Offal",
     image: wheat,
-    stock: 88,
     price: 3200,
-    discount: 2500,
-    rating: 5
   },
   {
     name: "Wheat Offal",
     image: wheat,
-    stock: 88,
     price: 3200,
-    discount: 2500,
-    rating: 5
   },
   {
     name: "Wheat Offal",
     image: wheat,
-    stock: 88,
     price: 3200,
-    discount: 2500,
-    rating: 5
   },
   {
     name: "Wheat Offal",
     image: wheat,
-    stock: 88,
     price: 3200,
-    discount: 2500,
-    rating: 5
+  },
+  {
+    name: "Wheat Offal",
+    image: wheat,
+    price: 3200,
   },
 ]
 

@@ -1,6 +1,6 @@
-import { Suspense, createContext, lazy } from "react";
+import { Suspense, lazy } from "react";
+import { AuthProvider } from "./utils/authProvider";
 import RouteIdentifier from "./layout/routeIdentifier";
-import { useLocalStorage } from "./utils/storageProvider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 // Layouts
@@ -15,16 +15,18 @@ import {
   LandingPage,
   SignPage,
 } from "./pages/default";
-import { HomePage } from "./pages/protected";
+import {
+  HomePage,
+  Cart,
+  PaymentCredentials,
+  PaymentStatus,
+  Dashboard,
+} from "./pages/protected";
 import Preloader from "./components/preloader";
 
-export const AuthContext = createContext({ user: "", setUser: "" });
-
 function App() {
-  const [user, setUser] = useLocalStorage("awenix-profiler-user", "");
-
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthProvider>
       <BrowserRouter>
         <Suspense fallback={<Preloader />}>
           <Routes>
@@ -41,13 +43,23 @@ function App() {
               </Route>
 
               <Route element={<ProtectedRoutes />}>
-                <Route path="/protected/home" element={<HomePage />} />
+                <Route path="/account/home" element={<HomePage />} />
+                <Route path="/account/cart" element={<Cart />} />
+                <Route
+                  path="/account/payment/*"
+                  element={<PaymentCredentials />}
+                />
+                <Route
+                  path="/account/payment/payment-status"
+                  element={<PaymentStatus />}
+                />
+                <Route path="/account/dashboard/*" element={<Dashboard />} />
               </Route>
             </Route>
           </Routes>
         </Suspense>
       </BrowserRouter>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 }
 

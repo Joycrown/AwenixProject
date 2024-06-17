@@ -2,8 +2,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { googleIcon } from "../../../assets";
+import axios from "axios";
+import { useAuthContext } from "../../../utils/authContext";
+import { toast } from "react-toastify";
 
 function Login() {
+  const { setUser } = useAuthContext();
   const [details, setDetails] = useState({
     email: "",
     password: "",
@@ -13,8 +17,49 @@ function Login() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
-    console.log("Submitting");
-    navigate("/protected/home");
+    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
+    const body = {
+      username: details.email,
+      password: details.password,
+      client_id: "",
+      client_secret: "",
+      scope: "",
+      grant_type: "",
+    };
+
+    axios
+      .post(`${endpoint}/login`, body, {
+        data: {
+          grant_type: "",
+          scope: "",
+          username: details.email,
+          password: details.password,
+          client_id: "",
+          client_secret: "",
+        },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+      .then((res) => {
+        const { access_token, refresh_token, current_user } = res.data;
+
+        setUser({
+          accessToken: access_token,
+          refreshToken: refresh_token,
+          name: current_user,
+          isLogged: true,
+        });
+
+        navigate("/account/home");
+      })
+      .catch((err) => {
+        console.log(err.response);
+
+        if (err.response.status == 400) {
+          toast.error(err?.response?.data?.detail);
+        }
+      });
   };
 
   const handleSignIn = () => {
@@ -31,7 +76,7 @@ function Login() {
 
       {/* Email address or Phone number */}
       <input
-        placeholder="Email or Phone number"
+        placeholder="Email address"
         className="border-b px-2 py-3 outline-none"
         value={details.email}
         onChange={(e) =>

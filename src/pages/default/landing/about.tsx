@@ -88,7 +88,7 @@ function AboutSection() {
                 </p>
                 <span className="text-5xl my-auto">{slide.name}</span>
                 <Link
-                  to="/register"
+                  to="/account/register"
                   className="py-3 border-b-2 border-white w-fit flex items-center gap-2"
                 >
                   Shop now <IoIosArrowRoundForward size="1.2rem" />

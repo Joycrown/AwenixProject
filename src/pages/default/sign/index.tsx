@@ -7,15 +7,19 @@ import Register from "./register";
 import ScreenOne from "./forgot-password/screenOne";
 import ScreenTwo from "./forgot-password/screenTwo";
 import ScreenThree from "./forgot-password/screenThree";
+import { useAuthContext } from "../../../utils/authContext";
 
 function Sign() {
   const [currentImage, setCurrentImage] = useState(0);
   const images = [signSlide, eggsImage, chicksSlide];
+  const { user } = useAuthContext();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (user.isLogged) navigate("/account/home");
+
     const route = pathname.split("/")[2];
 
     if (route === "") {
@@ -27,7 +31,7 @@ function Sign() {
     }
 
     setCurrentImage(0);
-  }, [navigate, pathname]);
+  }, [navigate, pathname, user]);
 
   return (
     <div className="flex flex-1 sm:min-h-[85vh]">

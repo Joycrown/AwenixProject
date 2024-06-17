@@ -1,35 +1,30 @@
 import { Link } from "react-router-dom";
 import { logo } from "../assets";
 
-import { IoCartOutline, IoClose, IoMenu} from "react-icons/io5";
-import { FiShoppingBag } from "react-icons/fi";
-import { ImExit } from "react-icons/im";
-import { CiStar } from "react-icons/ci";
+import { IoClose, IoMenu } from "react-icons/io5";
 import { useState } from "react";
-import { RxAvatar } from "react-icons/rx";
-import { RiSearch2Line } from "react-icons/ri";
-
+import { useAuthContext } from "../utils/authContext";
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
-  const [accsVisible, setAccsVisible] = useState(false);
+  const { user } = useAuthContext();
+
   const navigationLinks = [
     { name: "Home", href: "/" },
     { name: "Contact", href: "/contact-us" },
     { name: "About", href: "/about" },
-    { name: "Account", href: "/account/login" },
+    {
+      name: "Account",
+      href: user.isLogged ? "/account/home" : "/account/login",
+    },
   ];
-const handleSearch = (e: any) => {
-  e.preventDefault()
-  /*Search logic */
-}
+
   return (
     <header className="max-w-[1200px] w-[95%] py-4 mx-auto relative">
       <nav className="flex justify-between max-container items-center">
         {/* Start Mobile */}
         <button
-          className="md:hidden relative z-20"
+          className="sm:hidden relative z-20"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
@@ -39,8 +34,9 @@ const handleSearch = (e: any) => {
           )}
         </button>
         <ul
-          className={`fixed top-0 right-0 z-10 w-full h-screen duration-500 items-center gap-12 md:hidden bg-white pt-24 ${isOpen ? "flex flex-col" : "hidden"
-            }`}
+          className={`fixed top-0 right-0 z-10 w-full h-screen duration-500 items-center gap-12 sm:hidden bg-white pt-24 ${
+            isOpen ? "flex flex-col" : "hidden"
+          }`}
         >
           {navigationLinks.map((navLink, id) => (
             <li key={navLink.name + id} className="leading-normal text-md">
@@ -56,57 +52,16 @@ const handleSearch = (e: any) => {
         <Link className="relative z-10" to="/">
           <img src={logo} alt="Awenix logo" width={"20px"} height={"20px"} />
         </Link>
-        <ul className="hidden md:flex justify-center items-center gap-12">
+        <ul className="hidden sm:flex justify-center items-center gap-12">
           {navigationLinks.map((navLink, id) => (
             <li key={navLink.name + id} className="leading-normal text-md">
               <Link to={navLink.href}>{navLink.name}</Link>
             </li>
           ))}
         </ul>
+
         {/* Desktop */}
-
-        <div className="flex gap-1 max-md:hidden">
-          <form className="max-lg:hidden relative" onSubmit={handleSearch}>
-            <input className="_placeholder:bg-default-100 p-2.5 w-full rounded outline-none bg-default-800 relative" 
-            type="search" 
-            name="searchbar" 
-            placeholder="What are you looking for?" />
-            <button className="absolute top-1.5 right-4" type="submit">
-              <RiSearch2Line fontSize={'1.5rem'} />
-            </button>
-          </form>
-          <div className="flex gap-2">
-            <div className="cartconcern relative">
-              <IoCartOutline fontSize={'2rem'} />
-              <p className="rounded-full bg-default-400 text-default-800 absolute bottom-[1.5rem] right-0">
-                <span className="text-sm p-1.5">{cartCount}</span>
-              </p>
-            </div>
-
-            {/*Account options dropdown */}
-            <RxAvatar className="bg-default-500 text-default-800 rounded-full" 
-            fontSize={'2rem'} onClick={() => {setAccsVisible(!accsVisible)}}
-             />
-             
-            {accsVisible && (<div className="max-sm:hidden absolute top-[4.55rem] right-[0.10rem] bg-opacity-25 bg-white bg-blur-lg backdrop-filter backdrop-blur-lg backdrop-saturate-200 rounded-lg p-8">
-              <ul className="accountactions flex-col ">
-                <li className="flex text-default-800 gap-4 p-2">
-                  <RxAvatar fontSize={'2rem'}/> Manage My Account
-                </li>
-                <li className="flex text-default-800 gap-4 p-2">
-                  <FiShoppingBag fontSize={'2rem'}/>  My Orders
-                </li>
-                <li className="flex text-default-800 gap-4 p-2">
-                  <CiStar fontSize={'2rem'}/> My Reviews
-                </li>
-                <li className="flex text-default-800 gap-4 p-2">
-                  <ImExit fontSize={'2rem'}/>  Logout 
-                </li>
-              </ul>
-            </div>
-            )}
-          </div>
-        </div>
+        <nav className="max-sm:hidden"></nav>
       </nav>
     </header>
   );
