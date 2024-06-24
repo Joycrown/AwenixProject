@@ -5,6 +5,7 @@ import { googleIcon } from "../../../assets";
 import axios from "axios";
 import { useAuthContext } from "../../../utils/authContext";
 import { toast } from "react-toastify";
+import LoadingScreen from "../../../components/loadingScreen";
 
 function Login() {
   const { setUser } = useAuthContext();
@@ -12,6 +13,8 @@ function Login() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = (e: any) => {
@@ -26,6 +29,7 @@ function Login() {
       scope: "",
       grant_type: "",
     };
+    setLoading(true);
 
     axios
       .post(`${endpoint}/login`, body, {
@@ -52,6 +56,7 @@ function Login() {
         });
 
         navigate("/account/home");
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err.response);
@@ -59,6 +64,8 @@ function Login() {
         if (err.response.status == 400) {
           toast.error(err?.response?.data?.detail);
         }
+
+        setLoading(false);
       });
   };
 
@@ -71,6 +78,7 @@ function Login() {
       onSubmit={handleSubmit}
       className="flex flex-col justify-center gap-4 text-black h-full w-full max-w-sm mx-auto"
     >
+      {loading && <LoadingScreen />}
       <h2>Log in to Awenix</h2>
       <p>Enter your details below</p>
 

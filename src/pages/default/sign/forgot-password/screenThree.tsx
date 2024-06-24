@@ -3,11 +3,13 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import LoadingScreen from "../../../../components/loadingScreen";
 
 function ScreenThree() {
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -28,13 +30,21 @@ function ScreenThree() {
       return toast.error("Password doesn't match...");
     }
 
+    setLoading(true);
+
     axios
       .put(`${endpoint}/set_password`, {
         new_password: password,
         token: token,
       })
-      .then(() => navigate("/account/login"))
-      .catch(() => toast.error("Encountered an error... Try again"));
+      .then(() => {
+        setLoading(false);
+        navigate("/account/login");
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error("Encountered an error... Try again");
+      });
   };
 
   return (
@@ -42,6 +52,7 @@ function ScreenThree() {
       onSubmit={handleSubmit}
       className="flex flex-col justify-center gap-4 text-black h-full w-full max-w-sm mx-auto"
     >
+      {loading && <LoadingScreen />}
       <h2>Forgot Password</h2>
       <p>Type in your new password</p>
 

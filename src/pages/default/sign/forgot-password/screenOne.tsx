@@ -1,16 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from "axios";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+
+import LoadingScreen from "../../../../components/loadingScreen";
 
 function ScreenOne() {
   const [mail, setMail] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+  const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    setLoading(true);
 
-    console.log("Submitting");
-    navigate("/account/forgot-password-2");
+    axios
+      .put(`${endpoint}/set_password`, {
+        email: mail,
+      })
+      .then(() => {
+        setLoading(false);
+        toast.success("Verification mail has been sent to your email");
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error("Encountered an error... Try again");
+      });
   };
 
   return (
@@ -18,6 +36,7 @@ function ScreenOne() {
       onSubmit={handleSubmit}
       className="flex flex-col justify-center gap-4 text-black h-full w-full max-w-sm mx-auto"
     >
+      {loading && <LoadingScreen />}
       <h2>Forgot Password</h2>
       <p>Enter your email below</p>
 

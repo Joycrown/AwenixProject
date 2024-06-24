@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { googleIcon } from "../../../assets";
 import { toast } from "react-toastify";
+import LoadingScreen from "../../../components/loadingScreen";
 
 function Register() {
   const [details, setDetails] = useState({
@@ -12,10 +13,13 @@ function Register() {
     password: "",
     phone: "",
   });
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    setLoading(true);
 
     const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
     const body = {
@@ -28,12 +32,16 @@ function Register() {
     axios
       .post(`${endpoint}/signup`, body)
       .then(() => {
+        setLoading(false);
         toast.success("Account Successfully, log in...");
         setTimeout(() => {
           navigate("/account/login");
         }, 2000);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
   };
 
   const handleSignUp = () => {
@@ -45,6 +53,7 @@ function Register() {
       onSubmit={handleSubmit}
       className="flex flex-col justify-center gap-4 text-black h-full w-full max-w-sm mx-auto"
     >
+      {loading && <LoadingScreen />}
       <h2>Create an account</h2>
       <p>Enter your details below</p>
 

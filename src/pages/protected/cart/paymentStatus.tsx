@@ -42,7 +42,7 @@ function PaymentStatus() {
           Order #{order.id} {order.status}
         </h4>
         <Link
-          to="/"
+          to="/account/dashboard/orders"
           className="bg-default-500 text-white py-3 px-4 cursor-pointer rounded text-center w-full max-w-sm"
         >
           Track Order

@@ -3,10 +3,12 @@ import { productProps } from "../../../utils/interface";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuthContext } from "../../../utils/authContext";
+import LoadingScreen from "../../../components/loadingScreen";
 
 function Cart() {
   const { user } = useAuthContext();
   const [cartItems, setCartItems] = useState<productProps[]>([]);
+  const [loading, setLoading] = useState(false);
   const millingFee = 1000;
   const location = useLocation();
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ function Cart() {
   };
 
   const checkout = () => {
+    setLoading(true);
     const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
     const postData = cartItems.map((cart) => ({
       product_name: cart.name,
@@ -67,13 +70,18 @@ function Cart() {
       .then((res) => {
         const { payment } = res.data;
 
+        setLoading(false);
         window.location.href = payment.data.link;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
   };
 
   return (
     <section className="max-w-[1200px] w-[95%] mx-auto space-y-12 pt-12 text-sm pb-16">
+      {loading && <LoadingScreen />}
       <h4>
         <Link to="/account/home" className="text-default-700">
           Home

@@ -4,16 +4,19 @@ import { grains } from "../../../assets";
 import { useEffect, useState } from "react";
 import { productProps } from "../../../utils/interface";
 import { useAuthContext } from "../../../utils/authContext";
+import LoadingScreen from "../../../components/loadingScreen";
 
 function CustomOrder() {
   const { user } = useAuthContext();
   const [products, setProducts] = useState<productProps[]>([]);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const pageMax = 8;
   const navigate = useNavigate();
 
   useEffect(() => {
     const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
+    setLoading(true);
 
     axios
       .get(`${endpoint}/products?search=`, {
@@ -22,16 +25,20 @@ function CustomOrder() {
           Authorization: `Bearer ${user.accessToken}`,
         },
       })
-      .then((res) =>
+      .then((res) => {
         setProducts(() =>
           res.data.map((data: productProps) => ({
             ...data,
             quantity: 1,
             hidden: false,
           }))
-        )
-      )
-      .catch((err) => console.error(err));
+        );
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error(err);
+      });
   }, [user]);
 
   const changeQuantity = (currentValue: string, id: number) => {
@@ -75,6 +82,7 @@ function CustomOrder() {
 
   return (
     <section className="max-w-[1200px] w-[95%] mx-auto space-y-12 pt-12 text-sm pb-16">
+      {loading && <LoadingScreen />}
       <h4>
         <Link to="/account/home" className="text-default-700">
           Home
