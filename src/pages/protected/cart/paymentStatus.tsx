@@ -11,10 +11,10 @@ function PaymentStatus() {
 
   useEffect(() => {
     try {
-      // const params = new URLSearchParams(location.search).get("orderID");
-      // if (!params) {
-      //   throw new Error("No order found");
-      // }
+      const params = new URLSearchParams(location.search).get("orderId");
+      if (!params) {
+        throw new Error("No order found");
+      }
 
       // axios
       //   .get(`/orders/${params}`)
@@ -26,7 +26,7 @@ function PaymentStatus() {
       //     console.log(err);
       //     throw new Error("Failed to get order");
       //   });
-      setOrder({ id: "123RGR231567Y", status: "Confirmed" });
+      setOrder({ id: params, status: "Confirmed" });
     } catch (error) {
       toast.error(getErrorMessage(error));
       setTimeout(() => navigate(-1), 1500); // Navigate after error message toast

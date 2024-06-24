@@ -1,17 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function ScreenThree() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
+  const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search).get("token");
+    if (params) {
+      setToken(params);
+    } else {
+      navigate("/account/forgot-password-1");
+    }
+  }, [location, navigate]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
 
-    console.log("Submitting");
-    navigate("/account/login");
+    if (confirmPassword !== password) {
+      return toast.error("Password doesn't match...");
+    }
+
+    axios
+      .put(`${endpoint}/set_password`, {
+        new_password: password,
+        token: token,
+      })
+      .then(() => navigate("/account/login"))
+      .catch(() => toast.error("Encountered an error... Try again"));
   };
 
   return (

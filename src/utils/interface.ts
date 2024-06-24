@@ -4,6 +4,8 @@ export interface productProps {
   price: number;
   quantity: number;
   image: string;
+  size: string;
+  hidden: boolean;
   closeFn: () => void;
 }
 

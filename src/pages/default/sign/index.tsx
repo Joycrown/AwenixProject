@@ -5,7 +5,6 @@ import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Login from "./login";
 import Register from "./register";
 import ScreenOne from "./forgot-password/screenOne";
-import ScreenTwo from "./forgot-password/screenTwo";
 import ScreenThree from "./forgot-password/screenThree";
 import { useAuthContext } from "../../../utils/authContext";
 
@@ -43,8 +42,7 @@ function Sign() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password-1" element={<ScreenOne />} />
-          <Route path="/forgot-password-2" element={<ScreenTwo />} />
-          <Route path="/forgot-password-3" element={<ScreenThree />} />
+          <Route path="/forgot-password-2" element={<ScreenThree />} />
         </Routes>
       </div>
     </div>

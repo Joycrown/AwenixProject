@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { productProps } from "../../../utils/interface";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuthContext } from "../../../utils/authContext";
 
 function Cart() {
+  const { user } = useAuthContext();
   const [cartItems, setCartItems] = useState<productProps[]>([]);
-  const millingFee = 300;
+  const millingFee = 1000;
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -22,6 +24,10 @@ function Cart() {
   }, [location, navigate]);
 
   const changeQuantity = (currentValue: string, id: number) => {
+    if (currentValue === "") {
+      return;
+    }
+
     const valueConstruct =
       parseInt(currentValue) <= 1 ? 1 : parseInt(currentValue);
     setCartItems((prev) =>
@@ -47,8 +53,22 @@ function Cart() {
     }));
 
     axios
-      .post(`${endpoint}/orders`, { items: postData })
-      .then((res) => console.log(res.data))
+      .post(
+        `${endpoint}/orders`,
+        { items: [...postData] },
+        {
+          data: { items: [...postData] },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        const { payment } = res.data;
+
+        window.location.href = payment.data.link;
+      })
       .catch((err) => console.log(err));
   };
 

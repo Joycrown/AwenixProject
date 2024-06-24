@@ -18,9 +18,9 @@ import {
 import {
   HomePage,
   Cart,
-  PaymentCredentials,
   PaymentStatus,
   Dashboard,
+  CustomOrder,
 } from "./pages/protected";
 import Preloader from "./components/preloader";
 
@@ -44,11 +44,15 @@ function App() {
 
               <Route element={<ProtectedRoutes />}>
                 <Route path="/account/home" element={<HomePage />} />
-                <Route path="/account/cart" element={<Cart />} />
                 <Route
+                  path="/account/products/custom-order"
+                  element={<CustomOrder />}
+                />
+                <Route path="/account/cart" element={<Cart />} />
+                {/* <Route
                   path="/account/payment/*"
                   element={<PaymentCredentials />}
-                />
+                /> */}
                 <Route
                   path="/account/payment/payment-status"
                   element={<PaymentStatus />}
