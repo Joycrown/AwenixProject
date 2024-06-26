@@ -15,6 +15,9 @@ export default {
           800: "#FBFBFB", // lighter grey
         },
       },
+      theme: {
+        xs: "330px",
+      },
     },
   },
   plugins: [],

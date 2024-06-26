@@ -28,7 +28,7 @@ function ProductSection() {
       <SectionHead name="our products" position="left" />
       <h3 className="font-medium">Explore Our Products</h3>
       {products.length >= 1 ? (
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {products
             .slice(0, sliced ? 8 : products.length)
             .map((product, id) => (

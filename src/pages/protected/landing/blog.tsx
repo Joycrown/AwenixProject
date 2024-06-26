@@ -10,24 +10,11 @@ import SectionHead from "../../../components/sectionHead";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
+import { months } from "../../../utils/data";
 
 function BlogSection() {
   const [blogs, setBlogs] = useState([]);
   const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
 
   useEffect(() => {
     axios

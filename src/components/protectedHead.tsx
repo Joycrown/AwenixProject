@@ -1,15 +1,18 @@
 import { logo } from "../assets";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { ImExit } from "react-icons/im";
 import { RxAvatar } from "react-icons/rx";
 import { FiShoppingBag } from "react-icons/fi";
 import { RiSearch2Line } from "react-icons/ri";
-import { IoClose, IoMenu } from "react-icons/io5";
+import { useAuthContext } from "../utils/authContext";
+// import { IoClose, IoMenu } from "react-icons/io5";
 
 function ProtectedHeader() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { setUser } = useAuthContext();
+  const navigate = useNavigate();
+  // const [isOpen, setIsOpen] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,11 +21,16 @@ function ProtectedHeader() {
     console.log(e.target.valueOf);
   };
 
+  const logOut = () => {
+    setUser({ accessToken: "", refreshToken: "", name: "", isLogged: false });
+    navigate("/");
+  };
+
   return (
     <header className="max-w-[1200px] w-[95%] py-4 mx-auto relative">
       <nav className="flex justify-between max-container items-center">
         {/* Start Mobile */}
-        <button
+        {/* <button
           className="sm:hidden relative z-20"
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -31,12 +39,12 @@ function ProtectedHeader() {
           ) : (
             <IoMenu fontSize={"2rem"} />
           )}
-        </button>
+        </button> */}
         <Link className="relative z-10" to="/account/home">
           <img src={logo} alt="Awenix logo" width={"20px"} height={"20px"} />
         </Link>
 
-        <div className="flex gap-3 items-center max-sm:hidden w-full max-w-80">
+        <div className="flex gap-3 items-center w-full max-w-80 justify-end">
           <form
             className="max-sm:hidden relative flex items-center ml-auto w-full"
             onSubmit={handleSearch}
@@ -69,7 +77,7 @@ function ProtectedHeader() {
             />
 
             {showAccount && (
-              <div className="max-sm:hidden absolute top-[4.55rem] right-[0.10rem] bg-opacity-25 bg-default-500 bg-blur-lg backdrop-filter backdrop-blur-lg backdrop-saturate-200 rounded-lg py-6 px-4 z-50">
+              <div className="absolute top-[4.55rem] right-[0.10rem] bg-opacity-25 bg-default-500 bg-blur-lg backdrop-filter backdrop-blur-lg backdrop-saturate-200 rounded-lg py-6 px-4 z-50">
                 <div className="flex flex-col gap-5 text-sm">
                   <Link
                     to="/account/dashboard/profile"
@@ -83,7 +91,10 @@ function ProtectedHeader() {
                   >
                     <FiShoppingBag size="1.2rem" /> My Orders
                   </Link>
-                  <div className="flex items-center text-default-800 gap-4 cursor-pointer">
+                  <div
+                    onClick={logOut}
+                    className="flex items-center text-default-800 gap-4 cursor-pointer"
+                  >
                     <ImExit size="1.2rem" /> Logout
                   </div>
                 </div>

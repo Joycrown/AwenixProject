@@ -1,12 +1,16 @@
-import { ChangeEvent, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useAuthContext } from "../../../utils/authContext";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function Profile() {
+  const { user } = useAuthContext();
   const [userDetails, setUserDetails] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    address: "",
+    phone_no: "",
   });
 
   const [password, setPassword] = useState({
@@ -14,6 +18,36 @@ function Profile() {
     new: "",
     confirm_new: "",
   });
+
+  useEffect(() => {
+    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
+
+    axios
+      .get(`${endpoint}/current_user`, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
+      .then((res) => {
+        const { email, name, phone_no } = res.data;
+
+        setUserDetails({
+          firstName: name.split(" ")[0],
+          lastName: name.split(" ")[1],
+          email,
+          phone_no,
+        });
+      })
+      .catch((err) => {
+        console.log(err.response);
+
+        if (err.response.status == 400) {
+          toast.error(err?.response?.data?.detail);
+        }
+      });
+  }, [user]);
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
   };
@@ -28,14 +62,14 @@ function Profile() {
     <>
       <h4 className="text-default-400 text-xl">Edit your profile</h4>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex gap-3">
+        <div className="flex max-sm:flex-col gap-3">
           <div className="flex flex-col gap-3 w-full">
             <label htmlFor="firstName">First Name</label>
             <input
               type="text"
               id="firstName"
               placeholder="First Name"
-              value={userDetails.firstName}
+              value={userDetails.firstName ? userDetails.firstName : ""}
               onChange={handleInputChange}
               className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
             />
@@ -46,32 +80,32 @@ function Profile() {
               type="text"
               id="lastName"
               placeholder="Last Name"
-              value={userDetails.lastName}
+              value={userDetails.lastName ? userDetails.lastName : ""}
               onChange={handleInputChange}
               className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
             />
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex max-sm:flex-col gap-3">
           <div className="flex flex-col gap-3 w-full">
             <label htmlFor="email">Email</label>
             <input
               type="text"
               id="email"
               placeholder="Email"
-              value={userDetails.email}
+              value={userDetails.email ? userDetails.email : ""}
               onChange={handleInputChange}
               className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
             />
           </div>
           <div className="flex flex-col gap-3 w-full">
-            <label htmlFor="address">Address</label>
+            <label htmlFor="phone_no">Phone Number</label>
             <input
               type="text"
-              id="address"
-              placeholder="Address"
-              value={userDetails.address}
+              id="phone_no"
+              placeholder="phone_no"
+              value={userDetails.phone_no ? userDetails.phone_no : ""}
               onChange={handleInputChange}
               className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
             />
