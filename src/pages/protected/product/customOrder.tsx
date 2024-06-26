@@ -42,9 +42,9 @@ function CustomOrder() {
   }, [user]);
 
   const changeQuantity = (currentValue: string, id: number) => {
-    if (currentValue === "") {
-      return;
-    }
+    // if (currentValue === "") {
+    //   return;
+    // }
 
     const valueConstruct =
       parseInt(currentValue) <= 1 ? 1 : parseInt(currentValue);
@@ -73,7 +73,9 @@ function CustomOrder() {
   };
 
   const headToCart = () => {
-    const list = products.filter((product) => product.hidden === false);
+    const list = products.filter(
+      ({ hidden, quantity }) => hidden === false && quantity >= 1
+    );
 
     const queryString = `?product=${encodeURIComponent(JSON.stringify(list))}`;
 
@@ -139,7 +141,7 @@ function CustomOrder() {
                                 onChange={(e) =>
                                   changeQuantity(e.target.value, id)
                                 }
-                                min={1}
+                                // min={1}
                                 maxLength={4}
                                 type="number"
                               />

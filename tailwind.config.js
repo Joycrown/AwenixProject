@@ -16,7 +16,9 @@ export default {
         },
       },
       theme: {
-        xs: "330px",
+        screens: {
+          xs: "330px",
+        },
       },
     },
   },

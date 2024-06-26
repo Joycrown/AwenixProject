@@ -1,24 +1,31 @@
 import { logo } from "../assets";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { ImExit } from "react-icons/im";
 import { RxAvatar } from "react-icons/rx";
 import { FiShoppingBag } from "react-icons/fi";
 import { RiSearch2Line } from "react-icons/ri";
 import { useAuthContext } from "../utils/authContext";
-// import { IoClose, IoMenu } from "react-icons/io5";
 
 function ProtectedHeader() {
-  const { setUser } = useAuthContext();
   const navigate = useNavigate();
-  // const [isOpen, setIsOpen] = useState(false);
+  const { pathname } = useLocation();
+  const { setUser } = useAuthContext();
+
+  const [search, setSearch] = useState("");
   const [showAccount, setShowAccount] = useState(false);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     /*Search logic */
-    console.log(e.target.valueOf);
+    if (search === "") return;
+
+    navigate(`/account/products?q=${search}`, {
+      replace: pathname === "/account/products",
+    });
+
+    setSearch("");
   };
 
   const logOut = () => {
@@ -29,17 +36,6 @@ function ProtectedHeader() {
   return (
     <header className="max-w-[1200px] w-[95%] py-4 mx-auto relative">
       <nav className="flex justify-between max-container items-center">
-        {/* Start Mobile */}
-        {/* <button
-          className="sm:hidden relative z-20"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? (
-            <IoClose fontSize={"2rem"} />
-          ) : (
-            <IoMenu fontSize={"2rem"} />
-          )}
-        </button> */}
         <Link className="relative z-10" to="/account/home">
           <img src={logo} alt="Awenix logo" width={"20px"} height={"20px"} />
         </Link>
@@ -51,8 +47,10 @@ function ProtectedHeader() {
           >
             <input
               className="_placeholder:bg-default-100 p-2.5 pr-4 w-full text-xs rounded outline-none bg-default-800"
-              type="search"
+              type="text"
               name="searchbar"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="What are you looking for?"
             />
             <button className="absolute right-2.5" type="submit">

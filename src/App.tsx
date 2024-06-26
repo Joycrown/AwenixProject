@@ -21,6 +21,7 @@ import {
   PaymentStatus,
   Dashboard,
   CustomOrder,
+  Product,
 } from "./pages/protected";
 import Preloader from "./components/preloader";
 
@@ -48,6 +49,7 @@ function App() {
                   path="/account/products/custom-order"
                   element={<CustomOrder />}
                 />
+                <Route path="/account/products" element={<Product />} />
                 <Route path="/account/cart" element={<Cart />} />
                 {/* <Route
                   path="/account/payment/*"

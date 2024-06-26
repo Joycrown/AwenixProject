@@ -1,25 +1,25 @@
 import SectionHead from "../../../components/sectionHead";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdOutlineHeadphones } from "react-icons/md";
-import { GoShieldCheck } from "react-icons/go";
+// import { GoShieldCheck } from "react-icons/go";
 
 function OfferSection() {
   const offers = [
     {
       icon: TbTruckDelivery,
       title: "FREE AND FAST DELIVERY",
-      text: "Free delivery for all orders over $140",
+      text: "Free delivery for all orders",
     },
     {
       icon: MdOutlineHeadphones,
       title: "24/7 CUSTOMER SERVICE",
       text: "Friendly 24/7 customer support",
     },
-    {
-      icon: GoShieldCheck,
-      title: "MONEY BACK GUARANTEE",
-      text: "We return money within 30 days",
-    },
+    // {
+    //   icon: GoShieldCheck,
+    //   title: "MONEY BACK GUARANTEE",
+    //   text: "We return money within 30 days",
+    // },
   ];
   return (
     <div className="max-w-[1200px] w-[95%] mx-auto py-16">

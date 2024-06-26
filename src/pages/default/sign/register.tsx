@@ -19,27 +19,48 @@ function Register() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+
+    const { name, password, email, phone } = details;
+
+    if (name === "" || email === "" || phone === "") {
+      toast.error("All input fields must be filled");
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.error("Password must be more than 8 characters");
+      return;
+    }
+
     setLoading(true);
 
     const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
     const body = {
-      name: details.name,
-      password: details.password,
-      email: details.email,
-      phone_no: details.phone,
+      name,
+      password,
+      email,
+      phone_no: phone,
     };
 
     axios
-      .post(`${endpoint}/signup`, body)
+      .post(`${endpoint}/signup`, body, {
+        data: { ...body },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
       .then(() => {
         setLoading(false);
         toast.success("Account Successfully, log in...");
         setTimeout(() => {
           navigate("/account/login");
-        }, 2000);
+        }, 1500);
       })
       .catch((err) => {
         setLoading(false);
+        if (err.response) {
+          toast.error(err.response.data.detail.replaceAll(/0-9./g, ""));
+        }
         console.log(err);
       });
   };

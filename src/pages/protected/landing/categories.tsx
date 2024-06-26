@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function CategoriesSection() {
   return (
-    <div className="space-y-4">
+    <div id="categories" className="space-y-4">
       <SectionHead name="Customize your feed" position="left" />
 
       <h3 className="font-medium">

@@ -1,17 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import axios from "axios";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import Footer from "../components/footer";
 import { parseJwt } from "../utils/parser";
 import { useAuthContext } from "../utils/authContext";
 import ProtectedHeader from "../components/protectedHead";
-import axios from "axios";
 
 function ProtectedRoutes() {
   const { user, setUser } = useAuthContext();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to the section when the page mounts
+    if (location.hash) {
+      const sectionId = location.hash.substring(1);
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // Scroll to the top of the page if no hash is provided
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
 
   useEffect(() => {
     if (user.accessToken === "" || user.accessToken === undefined) {

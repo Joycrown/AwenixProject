@@ -2,10 +2,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useAuthContext } from "../../../utils/authContext";
+import LoadingScreen from "../../../components/loadingScreen";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function Profile() {
   const { user } = useAuthContext();
+  const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
+  const [loading, setLoading] = useState(false);
+
   const [userDetails, setUserDetails] = useState({
     firstName: "",
     lastName: "",
@@ -15,13 +19,11 @@ function Profile() {
 
   const [password, setPassword] = useState({
     current: "",
-    new: "",
+    newPass: "",
     confirm_new: "",
   });
 
   useEffect(() => {
-    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
-
     axios
       .get(`${endpoint}/current_user`, {
         headers: {
@@ -46,10 +48,55 @@ function Profile() {
           toast.error(err?.response?.data?.detail);
         }
       });
-  }, [user]);
+  }, [user, endpoint]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+
+    setLoading(true);
+
+    let postData;
+    const { firstName, lastName, phone_no, email } = userDetails;
+    const { newPass, confirm_new, current } = password;
+
+    if (newPass.length >= 8) {
+      if (newPass !== confirm_new) {
+        toast.error("New password and confirm password doesn't match");
+        return;
+      }
+
+      postData = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone_no,
+        current_password: current,
+        new_password: newPass,
+      };
+    } else {
+      postData = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone_no,
+      };
+    }
+
+    axios
+      .patch(`${endpoint}/update/details`, postData, {
+        data: { ...postData },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error(err);
+      });
   };
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +107,7 @@ function Profile() {
 
   return (
     <>
+      {loading && <LoadingScreen />}
       <h4 className="text-default-400 text-xl">Edit your profile</h4>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex max-sm:flex-col gap-3">
@@ -134,12 +182,12 @@ function Profile() {
             type="password"
             maxLength={19}
             id="new"
-            value={password.new}
+            value={password.newPass}
             placeholder="New Password"
             onChange={(e) =>
               setPassword((prev) => ({
                 ...prev,
-                new: e.target.value,
+                newPass: e.target.value,
               }))
             }
             className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
