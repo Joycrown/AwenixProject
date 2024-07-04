@@ -2,10 +2,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../utils/authContext";
 import { toast } from "react-toastify";
-import { orderProps } from "../../../utils/interface";
+import { orderProduct, orderProps } from "../../../utils/interface";
 import { months } from "../../../utils/data";
+import OrderPopup from "../../../components/orderPopup";
 
 function Orders() {
+  const [orderItems, setOrderItems] = useState<orderProduct[]>([]);
   const { user } = useAuthContext();
   const [orders, setOrders] = useState<orderProps[]>([]);
 
@@ -48,7 +50,13 @@ function Orders() {
           </thead>
           <tbody className="border bg-slate-100 [&>*:nth-child(even)]:bg-slate-300">
             {orders.map(
-              ({ order_id, created_at, total_price, status }: orderProps) => (
+              ({
+                order_id,
+                created_at,
+                total_price,
+                status,
+                order_items,
+              }: orderProps) => (
                 <tr key={order_id} className="">
                   <td className="td-class p-4 suspended-text">{order_id}</td>
                   <td className="td-class p-4 suspended-text">
@@ -66,7 +74,10 @@ function Orders() {
                   <td className="td-class p-4 suspended-text">
                     ₦ {total_price.toLocaleString("en-gb")}
                   </td>
-                  <td className="td-class p-4">
+                  <td
+                    onClick={() => setOrderItems(order_items)}
+                    className="td-class p-4"
+                  >
                     <span className="rounded-md bg-orange-600/50 px-4 py-3 text-xs font-semibold uppercase text-orange-100 antialiased block mx-auto w-fit">
                       {status}
                     </span>
@@ -77,6 +88,9 @@ function Orders() {
           </tbody>
         </table>
       </div>
+      {orderItems.length >= 1 && (
+        <OrderPopup items={orderItems} closeFn={() => setOrderItems([])} />
+      )}
     </div>
   );
 }
