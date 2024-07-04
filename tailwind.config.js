@@ -15,10 +15,8 @@ export default {
           800: "#FBFBFB", // lighter grey
         },
       },
-      theme: {
-        screens: {
-          xs: "330px",
-        },
+      screens: {
+        xs: "350px",
       },
     },
   },

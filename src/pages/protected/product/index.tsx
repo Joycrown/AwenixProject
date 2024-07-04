@@ -39,11 +39,12 @@ function Product() {
       });
   }, [user, location, navigate]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 400, behavior: "smooth" });
+  }, [query]);
+
   return (
-    <section
-      className="max-w-[1200px] w-[95%] mx-auto space-y-8 pt-8 pb-16"
-      id="products"
-    >
+    <section className="max-w-[1200px] w-[95%] mx-auto space-y-8 pt-8 pb-16">
       <div className="relative bg-default-500 rounded-md min-h-[300px] md:min-h-[400px] !flex items-stretch text-white">
         <div className="flex flex-col max-md:gap-8 p-6 md:p-12 w-full capitalize relative z-10">
           <p>Awenix Nigeria Ltd</p>
@@ -62,7 +63,7 @@ function Product() {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4" id="products">
         <h4 className="font-medium text-2xl">
           {query
             ? `Showing all results for ${query}`

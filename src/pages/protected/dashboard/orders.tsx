@@ -35,8 +35,8 @@ function Orders() {
   return (
     <div className="flex flex-col gap-4 w-full">
       <h4 className="text-default-400 text-xl">Orders</h4>
-      <div className="flex items-center justify-center w-full">
-        <table className="border-separate border-spacing-y-2 text-sm w-full">
+      <div className="flex items-center xs:justify-center w-full max-xs:overflow-x-auto">
+        <table className="border-separate border-spacing-y-2 text-sm w-full max-xs:min-w-[600px]">
           <thead className="bg-default-500 text-white rounded">
             <tr>
               <th className="text-start p-4">Order ID</th>

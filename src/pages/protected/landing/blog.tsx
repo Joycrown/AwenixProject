@@ -78,7 +78,9 @@ function BlogSection() {
                       </p>
                     </div>
                     <div className="pl-4 border-l space-y-4">
-                      <h4 className="text-lg font-medium">{title}</h4>
+                      <h4 className="text-lg font-medium line-clamp-3">
+                        {title}
+                      </h4>
                       <p
                         className="text-xs line-clamp-6"
                         dangerouslySetInnerHTML={{ __html: description }}
