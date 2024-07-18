@@ -3,7 +3,8 @@ export interface productProps {
   description: string;
   price: number;
   quantity: number;
-  image: string;
+  // image: string;
+  product_image: string;
   size: string;
   hidden: boolean;
   closeFn: () => void;

@@ -7,9 +7,9 @@ import { months } from "../../../utils/data";
 import OrderPopup from "../../../components/orderPopup";
 
 function Orders() {
-  const [orderItems, setOrderItems] = useState<orderProduct[]>([]);
   const { user } = useAuthContext();
   const [orders, setOrders] = useState<orderProps[]>([]);
+  const [orderItems, setOrderItems] = useState<orderProduct[]>([]);
 
   useEffect(() => {
     const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
@@ -78,7 +78,13 @@ function Orders() {
                     onClick={() => setOrderItems(order_items)}
                     className="td-class p-4"
                   >
-                    <span className="rounded-md bg-orange-600/50 px-4 py-3 text-xs font-semibold uppercase text-orange-100 antialiased block mx-auto w-fit">
+                    <span
+                      className={`rounded-md ${
+                        status.toLowerCase() === "confirmed"
+                          ? "bg-green-600/50 text-green-100"
+                          : "bg-orange-600/50 text-orange-100"
+                      } px-4 py-3 text-xs font-semibold uppercase antialiased block mx-auto w-fit`}
+                    >
                       {status}
                     </span>
                   </td>

@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import { AuthProvider } from "./utils/authProvider";
 import RouteIdentifier from "./layout/routeIdentifier";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 // Layouts
 const DefaultRoutes = lazy(() => import("./layout/defaultRoutes"));
@@ -54,13 +54,15 @@ function App() {
                 {/* <Route
                   path="/account/payment/*"
                   element={<PaymentCredentials />}
-                /> */}
+                  /> */}
                 <Route
                   path="/account/payment/payment-status"
                   element={<PaymentStatus />}
                 />
                 <Route path="/account/dashboard/*" element={<Dashboard />} />
               </Route>
+
+              <Route path="*" element={<Navigate to="/" />} />
             </Route>
           </Routes>
         </Suspense>

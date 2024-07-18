@@ -17,7 +17,7 @@ function ProductCard({ product }: productCardProps) {
         onClick={() => setHidden(true)}
       >
         <div className="bg-default-700 bg-opacity-50 rounded overflow-hidden">
-          <img src={product.image} alt={product.name} />
+          <img src={product.product_image} alt={product.name} />
         </div>
         <div className="space-y-1">
           <h4 className="capitalize">{product.name}</h4>
