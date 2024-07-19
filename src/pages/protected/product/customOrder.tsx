@@ -79,7 +79,7 @@ function CustomOrder() {
 
     const queryString = `?product=${encodeURIComponent(JSON.stringify(list))}`;
 
-    navigate(`/account/cart${queryString}`);
+    navigate(`/account/cart${queryString}`, { state: { isMilling: true } });
   };
 
   return (

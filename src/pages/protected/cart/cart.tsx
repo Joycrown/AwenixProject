@@ -9,7 +9,7 @@ function Cart() {
   const { user } = useAuthContext();
   const [cartItems, setCartItems] = useState<productProps[]>([]);
   const [loading, setLoading] = useState(false);
-  const millingFee = 1000;
+  const [isMilling, setIsMilling] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,6 +17,7 @@ function Cart() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search).get("product");
+    setIsMilling(location.state?.isMilling ? 2000 : 0);
     if (params) {
       const product = JSON.parse(decodeURIComponent(params));
       setCartItems(product);
@@ -55,12 +56,25 @@ function Cart() {
       quantity: cart.quantity,
     }));
 
+    const totalMilling =
+      isMilling *
+      Math.ceil(
+        cartItems.reduce(
+          (acc, cart) =>
+            acc +
+            (cart.size.toLowerCase() === "bag"
+              ? 25 * cart.quantity
+              : cart.quantity),
+          0
+        ) / 1000
+      );
+
     axios
       .post(
         `${endpoint}/orders`,
-        { items: [...postData] },
+        { items: [...postData], miscellaneous: totalMilling },
         {
-          data: { items: [...postData] },
+          data: { items: [...postData], miscellaneous: totalMilling },
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.accessToken}`,
@@ -158,18 +172,34 @@ function Cart() {
               </span>
             </div>
             <div className="flex justify-between border-b border-default-100 py-3">
-              <span>Shipping:</span>
-              <span>₦ 0</span>
+              <span>Quantity (in KG): </span>
+              <span>
+                {cartItems.reduce(
+                  (acc, cart) =>
+                    acc +
+                    (cart.size.toLowerCase() === "bag"
+                      ? 25 * cart.quantity
+                      : cart.quantity),
+                  0
+                )}{" "}
+                KG
+              </span>
             </div>
             <div className="flex justify-between border-b border-default-100 py-3">
               <span>Milling:</span>
               <span>
                 ₦{" "}
                 {(
-                  millingFee *
+                  isMilling *
                   Math.ceil(
-                    cartItems.reduce((acc, cart) => acc + cart.quantity, 0) /
-                      100
+                    cartItems.reduce(
+                      (acc, cart) =>
+                        acc +
+                        (cart.size.toLowerCase() === "bag"
+                          ? 25 * cart.quantity
+                          : cart.quantity),
+                      0
+                    ) / 1000
                   )
                 ).toLocaleString("en-gb")}
               </span>
@@ -180,10 +210,16 @@ function Cart() {
               <span>
                 ₦{" "}
                 {(
-                  millingFee *
+                  isMilling *
                     Math.ceil(
-                      cartItems.reduce((acc, cart) => acc + cart.quantity, 0) /
-                        100
+                      cartItems.reduce(
+                        (acc, cart) =>
+                          acc +
+                          (cart.size.toLowerCase() === "bag"
+                            ? 25 * cart.quantity
+                            : cart.quantity),
+                        0
+                      ) / 1000
                     ) +
                   cartItems.reduce(
                     (acc, cart) => acc + cart.price * cart.quantity,

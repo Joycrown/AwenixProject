@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 interface productPopProps extends Omit<productProps, "quantity" | "image"> {}
 
 function ProductPopup(props: productPopProps) {
-  const { price, name, description, closeFn } = props;
+  const { price, name, description, closeFn, size } = props;
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
 
@@ -33,10 +33,10 @@ function ProductPopup(props: productPopProps) {
   const headToCart = () => {
     if (quantity === 0) return;
     const queryString = `?product=${encodeURIComponent(
-      JSON.stringify([{ price, name, description, quantity }])
+      JSON.stringify([{ price, name, description, quantity, size }])
     )}`;
 
-    navigate(`/account/cart${queryString}`);
+    navigate(`/account/cart${queryString}`, { state: { isMilling: false } });
   };
 
   return (
@@ -55,7 +55,9 @@ function ProductPopup(props: productPopProps) {
           <h4 className="capitalize font-medium">{name}</h4>
           <p className="text-sm">{description}</p>
         </div>
-        <p className="py-4 text-sm">+₦ {price}/kg</p>
+        <p className="py-4 text-sm">
+          +₦ {price}/{size}
+        </p>
 
         <div className="flex gap-3">
           <div className="flex">
