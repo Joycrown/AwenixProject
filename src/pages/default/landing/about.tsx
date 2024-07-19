@@ -27,7 +27,7 @@ function AboutSection() {
     },
     {
       title: "Broiler Finisher Feed",
-      name: "Finish strong with Awenix",
+      name: "Finish strong with Awenix feed",
       id: 3,
       color: "#0092DF",
     },
