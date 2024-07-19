@@ -1,24 +1,55 @@
 import { useState } from "react";
 import { map } from "../../../assets";
 import ContactInfo from "./contactInfo";
+import axios from "axios";
+import { toast } from "react-toastify";
+import LoadingScreen from "../../../components/loadingScreen";
 
 function ContactPage() {
   const [contact, setContact] = useState({
     name: "",
     mail: "",
-    phone: "",
-    referral: "",
+    subject: "",
+    message: "",
   });
 
-  const selectable = ["Instagram", "Facebook", "Google Search"];
+  const [loading, setLoading] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
+
+    const { name, mail, subject, message } = contact;
+
+    if (name === "" || mail === "" || subject === "" || message === "") {
+      return toast.error("Please fill all the fields");
+    }
+
+    setLoading(true);
+
+    axios
+      .post(`${endpoint}/contact_us/awenix`, {
+        name: name,
+        email: mail,
+        subject: subject,
+        message: message,
+      })
+      .then(() => {
+        setLoading(false);
+        toast.success(
+          "Mail has been recieved... You will be contacted shortly"
+        );
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error("Encountered an error... Try again");
+      });
   };
 
   return (
     <div className="min-h-screen relative py-16">
+      {loading && <LoadingScreen />}
       <div className="flex max-md:flex-col gap-24 max-w-screen-lg w-[95%] mx-auto items-end">
         <div className="space-y-10">
           <h1 className="font-bold">
@@ -40,7 +71,7 @@ function ContactPage() {
             />
             <input
               className="px-5 py-3 border outline-none w-full rounded text-sm"
-              placeholder="Email"
+              placeholder="Email*"
               type="email"
               value={contact.mail}
               onChange={(e) =>
@@ -50,32 +81,23 @@ function ContactPage() {
 
             <input
               className="px-5 py-3 border outline-none w-full rounded text-sm"
-              placeholder="Phone number*"
-              type="tel"
-              value={contact.phone}
+              placeholder="Subject*"
+              value={contact.subject}
               onChange={(e) =>
-                setContact((prev) => ({ ...prev, phone: e.target.value }))
+                setContact((prev) => ({ ...prev, subject: e.target.value }))
               }
               required
             />
 
-            <select
+            <textarea
+              className="px-5 py-3 border outline-none w-full rounded text-sm"
+              placeholder="Message*"
+              value={contact.message}
               onChange={(e) =>
-                setContact((prev) => ({
-                  ...prev,
-                  referral: e.target.value,
-                }))
+                setContact((prev) => ({ ...prev, message: e.target.value }))
               }
-              className="w-full border outline-none px-5 py-3"
-              value={contact.referral}
-            >
-              <option value="" disabled hidden>
-                How did you find us?
-              </option>
-              {selectable.map((selector) => (
-                <option key={selector}>{selector}</option>
-              ))}
-            </select>
+              required
+            />
 
             <button
               type="submit"

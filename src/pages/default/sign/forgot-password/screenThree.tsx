@@ -39,7 +39,10 @@ function ScreenThree() {
       })
       .then(() => {
         setLoading(false);
-        navigate("/account/login");
+        toast.success("Password has been changed...");
+        setTimeout(() => {
+          navigate("/account/login");
+        }, 1000);
       })
       .catch(() => {
         setLoading(false);
