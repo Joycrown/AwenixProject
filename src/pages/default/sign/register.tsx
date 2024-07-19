@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { googleIcon } from "../../../assets";
 import { toast } from "react-toastify";
+// import { googleIcon } from "../../../assets";
+import { Link, useNavigate } from "react-router-dom";
 import LoadingScreen from "../../../components/loadingScreen";
 
 function Register() {
@@ -65,9 +65,9 @@ function Register() {
       });
   };
 
-  const handleSignUp = () => {
-    console.log("Signing up with google");
-  };
+  // const handleSignUp = () => {
+  //   console.log("Signing up with google");
+  // };
 
   return (
     <form
@@ -131,13 +131,13 @@ function Register() {
         Create Account
       </button>
 
-      <div
+      {/* <div
         onClick={handleSignUp}
         className="w-full py-3 px-4 cursor-pointer bg-transparent flex gap-4 items-center justify-center border-default-100 border rounded-md"
       >
         <img className="w-6 mx-0" src={googleIcon} alt="Sign up with google" />{" "}
         Sign up with Google
-      </div>
+      </div> */}
 
       <p className="text-center text-sm">
         Already have account?{" "}

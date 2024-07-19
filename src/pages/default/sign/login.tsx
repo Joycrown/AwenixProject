@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { googleIcon } from "../../../assets";
 import axios from "axios";
-import { useAuthContext } from "../../../utils/authContext";
+import { useState } from "react";
 import { toast } from "react-toastify";
+// import { googleIcon } from "../../../assets";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../../utils/authContext";
 import LoadingScreen from "../../../components/loadingScreen";
 
 function Login() {
@@ -69,9 +69,9 @@ function Login() {
       });
   };
 
-  const handleSignIn = () => {
-    console.log("Signing up with google");
-  };
+  // const handleSignIn = () => {
+  //   console.log("Signing up with google");
+  // };
 
   return (
     <form
@@ -120,13 +120,13 @@ function Login() {
         Log in
       </button>
 
-      <div
+      {/* <div
         onClick={handleSignIn}
         className="w-full py-3 px-4 cursor-pointer bg-transparent flex gap-4 items-center justify-center border-default-100 border rounded-md"
       >
         <img className="w-6 mx-0" src={googleIcon} alt="Sign up with google" />{" "}
         Sign in with Google
-      </div>
+      </div> */}
 
       <p className="text-center text-sm">
         Don't have account?{" "}
