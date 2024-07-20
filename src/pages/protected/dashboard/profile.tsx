@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useAuthContext } from "../../../utils/authContext";
 import LoadingScreen from "../../../components/loadingScreen";
+import PasswordInput from "../../../components/passwordInput";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function Profile() {
@@ -162,56 +163,53 @@ function Profile() {
 
         <div className="flex flex-col gap-3">
           <label>Password Changes</label>
-          <input
-            required
-            type="password"
-            maxLength={19}
-            id="current"
+
+          {/* Password */}
+          <PasswordInput
             value={password.current}
+            setValue={(value: string) =>
+              setPassword((prev) => ({
+                ...prev,
+                current: value,
+              }))
+            }
+            id="password"
             placeholder="Current Password"
-            onChange={(e) =>
-              setPassword((prev) => ({
-                ...prev,
-                current: e.target.value,
-              }))
-            }
-            className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
+            customClass
           />
-          <input
-            required
-            type="password"
-            maxLength={19}
-            id="new"
+
+          {/* New Password */}
+          <PasswordInput
             value={password.newPass}
+            setValue={(value: string) =>
+              setPassword((prev) => ({
+                ...prev,
+                newPass: value,
+              }))
+            }
+            id="newPassword"
             placeholder="New Password"
-            onChange={(e) =>
-              setPassword((prev) => ({
-                ...prev,
-                newPass: e.target.value,
-              }))
-            }
-            className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
+            customClass
           />
-          <input
-            required
-            type="password"
-            maxLength={19}
-            id="confirm_new"
+
+          <PasswordInput
             value={password.confirm_new}
-            placeholder="Confirm Password"
-            onChange={(e) =>
+            setValue={(value: string) =>
               setPassword((prev) => ({
                 ...prev,
-                confirm_new: e.target.value,
+                confirm_new: value,
               }))
             }
-            className="border outline-none p-3 rounded text-xs font-normal focus:border-default-500 focus:shadow-md shadow-default-500 bg-neutral-200 text-black"
+            id="confirmPassword"
+            placeholder="Confirm Password"
+            customClass
           />
         </div>
 
         <div className="ml-auto w-fit flex gap-3">
           <button
             type="reset"
+            onClick={() => window.location.reload()}
             className="py-3 px-4 cursor-pointer rounded text-center border-0 outline-none"
           >
             Cancel

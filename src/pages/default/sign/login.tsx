@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../utils/authContext";
 import LoadingScreen from "../../../components/loadingScreen";
+import PasswordInput from "../../../components/passwordInput";
 
 function Login() {
   const { setUser } = useAuthContext();
@@ -93,17 +94,16 @@ function Login() {
         required
       />
 
-      {/* Password */}
-      <input
-        type="password"
-        placeholder="Password"
-        className="border-b px-2 py-3 outline-none"
+      <PasswordInput
         value={details.password}
-        onChange={(e) =>
-          setDetails((prev) => ({ ...prev, password: e.target.value }))
+        setValue={(value: string) =>
+          setDetails((prev) => ({ ...prev, password: value }))
         }
-        required
+        id="password"
+        placeholder="Password"
+        customClass={false}
       />
+
       <div>
         <Link
           className="ml-auto block w-fit text-xs hover:underline underline-offset-8 hover:text-default-500"

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 // import { googleIcon } from "../../../assets";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingScreen from "../../../components/loadingScreen";
+import PasswordInput from "../../../components/passwordInput";
 
 function Register() {
   const [details, setDetails] = useState({
@@ -112,16 +113,14 @@ function Register() {
         required
       />
 
-      {/* Password */}
-      <input
-        type="password"
-        placeholder="Password"
-        className="border-b px-2 py-3 outline-none"
+      <PasswordInput
         value={details.password}
-        onChange={(e) =>
-          setDetails((prev) => ({ ...prev, password: e.target.value }))
+        setValue={(value: string) =>
+          setDetails((prev) => ({ ...prev, password: value }))
         }
-        required
+        id="password"
+        placeholder="Password"
+        customClass={false}
       />
 
       <button
