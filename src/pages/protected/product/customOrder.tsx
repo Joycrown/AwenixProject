@@ -107,7 +107,13 @@ function CustomOrder() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-medium">Select your mains</h4>
+            <div className="space-y-2">
+              <h4 className="font-medium">Select your mains</h4>
+              <p>
+                To remove a product, click on the "-" and then to re-add a
+                product, click on the "+"
+              </p>
+            </div>
             {products.length >= 1 ? (
               <div className="flex flex-col gap-4">
                 {products
