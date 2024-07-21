@@ -110,8 +110,7 @@ function CustomOrder() {
             <div className="space-y-2">
               <h4 className="font-medium">Select your mains</h4>
               <p>
-                To remove a product, click on the "-" and then to re-add a
-                product, click on the "+"
+                Remove unwanted products and add desired products to your order.
               </p>
             </div>
             {products.length >= 1 ? (
@@ -128,16 +127,16 @@ function CustomOrder() {
                         className="flex items-center justify-between md:min-w-[400px]"
                       >
                         <span className="flex gap-3 items-center">
-                          <span className="capitalize">{name}</span> +₦{" "}
+                          <span className="capitalize truncate">{name}</span> +₦{" "}
                           {price.toLocaleString("en-gb")}/{size}
                         </span>
                         <div className="flex items-center gap-4">
                           {hidden ? (
                             <span
                               onClick={() => addProduct(id)}
-                              className="font-medium cursor-pointer"
+                              className="font-medium cursor-pointer px-3 py-2 bg-default-500 text-white rounded"
                             >
-                              +
+                              Add product
                             </span>
                           ) : (
                             <>
@@ -153,9 +152,9 @@ function CustomOrder() {
                               />
                               <span
                                 onClick={() => removeProduct(id)}
-                                className="font-medium cursor-pointer"
+                                className="font-medium cursor-pointer px-3 py-2 bg-default-500 text-white rounded"
                               >
-                                -
+                                Remove
                               </span>
                             </>
                           )}
