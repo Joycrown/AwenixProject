@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { VscSend } from "react-icons/vsc";
-import { footerqrimg, appstore, playstorebtn } from "../assets";
-import { RiFacebookLine } from "react-icons/ri";
-import { SlSocialTwitter } from "react-icons/sl";
-import { FaInstagram } from "react-icons/fa";
-import { RiLinkedinLine } from "react-icons/ri";
+// import { footerqrimg, appstore, playstorebtn } from "../assets";
+// import { RiFacebookLine } from "react-icons/ri";
+// import { SlSocialTwitter } from "react-icons/sl";
+// import { FaInstagram } from "react-icons/fa";
+// import { RiLinkedinLine } from "react-icons/ri";
 import { useAuthContext } from "../utils/authContext";
 
 function Footer() {
@@ -23,7 +23,6 @@ function Footer() {
         <div className="flex flex-col max-md:items-center">
           <h3 className="text-2xl font-bold py-3">Awenix Farm Nigeria</h3>
           <p className="py-3">Subscribe</p>
-          <span className="py-2">Get 10% off your first order</span>
           <form className="relative py-3 flex items-center max-w-64 md:max-w-60">
             <input
               className="bg-default-100 w-full border-default-800 border-2 placeholder:text-default-300 py-2 pl-3 pr-10 outline-none rounded"
@@ -38,12 +37,22 @@ function Footer() {
 
         <div className="flex flex-col max-md:items-center">
           <h3 className="text-2xl py-2">Contact Us </h3>
-          <p className="break-words leading-2 py-3">
-            111 Bijoy Sarani, Dhaka,
-            <br /> DH 1515, Bangladesh
-          </p>
-          <p className="py-3">awenixltd@gmail.com</p>
-          <p className="">+88015-88888-9999</p>
+          <address className="break-words leading-2 py-3">
+            Plot 4 along Ologuneru, Eruwa road,
+            <br /> Akufo Farm Settlement
+          </address>
+          <a
+            href="mailto: awenixnigerialimited@gmail.com"
+            className="underline-none py-3"
+          >
+            awenixnigerialimited@gmail.com
+          </a>
+          <a href="tel: +234 805 515 1903" className="underline-none py-3">
+            +234 805 515 1903
+          </a>
+          <a href="tel: +234 903 663 9178" className="underline-none py-3">
+            +234 903 663 9178
+          </a>
         </div>
 
         <div className="flex flex-col max-md:items-center">
@@ -73,9 +82,23 @@ function Footer() {
             <Link to="/about">About</Link>
             <Link to="/contact-us">Contact</Link>
           </div>
+          {/* <div className="flex gap-12 text-2xl max-md:w-4/5 md:w-full mt-10 ">
+            <Link to="">
+              <RiFacebookLine />
+            </Link>
+            <Link to="">
+              <SlSocialTwitter />
+            </Link>
+            <Link to="">
+              <FaInstagram />
+            </Link>
+            <Link to="">
+              <RiLinkedinLine />
+            </Link>
+          </div> */}
         </div>
 
-        <div className="flex flex-col max-md:items-center">
+        {/* <div className="flex flex-col max-md:items-center">
           <h3 className="text-2xl py-2">Download App</h3>
           <p className="">Save $3 with App New Users Only</p>
 
@@ -105,21 +128,8 @@ function Footer() {
             </div>
           </div>
 
-          <div className="flex gap-12 text-2xl max-md:w-4/5 md:w-full mt-10 ">
-            <Link to="">
-              <RiFacebookLine />
-            </Link>
-            <Link to="">
-              <SlSocialTwitter />
-            </Link>
-            <Link to="">
-              <FaInstagram />
-            </Link>
-            <Link to="">
-              <RiLinkedinLine />
-            </Link>
-          </div>
-        </div>
+          
+        </div> */}
       </div>
 
       <div className="w-full text-center">

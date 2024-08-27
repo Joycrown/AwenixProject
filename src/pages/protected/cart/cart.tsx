@@ -17,7 +17,7 @@ function Cart() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search).get("product");
-    setIsMilling(location.state?.isMilling ? 2000 : 0);
+    setIsMilling(location.state?.isMilling ? 1000 : 0);
     if (params) {
       const product = JSON.parse(decodeURIComponent(params));
       setCartItems(product);
@@ -66,7 +66,7 @@ function Cart() {
               ? 25 * cart.quantity
               : cart.quantity),
           0
-        ) / 1000
+        ) / 10
       );
 
     axios
@@ -82,10 +82,10 @@ function Cart() {
         }
       )
       .then((res) => {
-        const { payment } = res.data;
-
         setLoading(false);
-        window.location.href = payment.data.link;
+        navigate(
+          `/account/payment/payment-status?orderId=${res.data.order_id}`
+        );
       })
       .catch((err) => {
         setLoading(false);
@@ -199,7 +199,7 @@ function Cart() {
                           ? 25 * cart.quantity
                           : cart.quantity),
                       0
-                    ) / 1000
+                    ) / 10
                   )
                 ).toLocaleString("en-gb")}
               </span>
@@ -219,7 +219,7 @@ function Cart() {
                             ? 25 * cart.quantity
                             : cart.quantity),
                         0
-                      ) / 1000
+                      ) / 10
                     ) +
                   cartItems.reduce(
                     (acc, cart) => acc + cart.price * cart.quantity,
