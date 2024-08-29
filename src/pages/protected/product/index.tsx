@@ -34,9 +34,9 @@ function Product() {
         setProducts(res.data);
       })
       .catch((err) => {
-        setLoading(false);
         console.error(err);
-      });
+      })
+      .finally(() => setLoading(false));
   }, [user, location, navigate]);
 
   useEffect(() => {
