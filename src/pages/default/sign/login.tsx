@@ -62,7 +62,7 @@ function Login() {
       .catch((err) => {
         console.log(err.response);
 
-        if (err.response.status == 400) {
+        if (err.response.status != 200) {
           toast.error(err?.response?.data?.detail.replaceAll(/0-9./g, ""));
         }
 
