@@ -6,6 +6,8 @@ import { productProps } from "../../../utils/interface";
 import { useAuthContext } from "../../../utils/authContext";
 import LoadingScreen from "../../../components/loadingScreen";
 
+const STORAGE_KEY = "custom_order_products";
+
 function CustomOrder() {
   const { user } = useAuthContext();
   const [products, setProducts] = useState<productProps[]>([]);
@@ -26,13 +28,31 @@ function CustomOrder() {
         },
       })
       .then((res) => {
-        setProducts(() =>
-          res.data.map((data: productProps) => ({
-            ...data,
-            quantity: 1,
-            hidden: false,
-          }))
-        );
+        // Get saved products from localStorage
+        const savedProducts = localStorage.getItem(STORAGE_KEY);
+        if (savedProducts) {
+          const parsedProducts = JSON.parse(savedProducts);
+          // Merge API products with saved products
+          setProducts(() =>
+            res.data.map((data: productProps) => {
+              const savedProduct = parsedProducts.find((p: productProps) => p.id === data.id);
+              return {
+                ...data,
+                quantity: savedProduct ? savedProduct.quantity : 1,
+                hidden: savedProduct ? savedProduct.hidden : true,
+              };
+            })
+          );
+        } else {
+          // If no saved products, use default values
+          setProducts(() =>
+            res.data.map((data: productProps) => ({
+              ...data,
+              quantity: 1,
+              hidden: true,
+            }))
+          );
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -41,11 +61,14 @@ function CustomOrder() {
       });
   }, [user]);
 
-  const changeQuantity = (currentValue: string, id: number) => {
-    // if (currentValue === "") {
-    //   return;
-    // }
+  // Save to localStorage whenever products change
+  useEffect(() => {
+    if (products.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+    }
+  }, [products]);
 
+  const changeQuantity = (currentValue: string, id: number) => {
     const valueConstruct =
       parseInt(currentValue) <= 1 ? 1 : parseInt(currentValue);
 
@@ -76,12 +99,14 @@ function CustomOrder() {
     const list = products.filter(
       ({ hidden, quantity }) => hidden === false && quantity >= 1
     );
-
-    const queryString = `?product=${encodeURIComponent(JSON.stringify(list))}`;
-
-    navigate(`/account/cart${queryString}`, { state: { isMilling: true } });
+  
+    // Encode both the product list and isMilling flag in the URL
+    const queryString = `?product=${encodeURIComponent(JSON.stringify(list))}&isMilling=true`;
+    
+    // We can keep the state if needed, or remove it since isMilling is now in URL
+    navigate(`/account/cart${queryString}`);
   };
-
+  
   return (
     <section className="max-w-[1200px] w-[95%] mx-auto space-y-12 pt-12 text-sm pb-16">
       {loading && <LoadingScreen />}
@@ -146,7 +171,6 @@ function CustomOrder() {
                                 onChange={(e) =>
                                   changeQuantity(e.target.value, id)
                                 }
-                                // min={1}
                                 maxLength={4}
                                 type="number"
                               />

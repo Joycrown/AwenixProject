@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface productProps {
+  id: any;
   name: string;
   description: string;
   price: number;
@@ -35,6 +37,7 @@ export interface orderProps {
   created_at: string;
   expire_at: string;
   status: string;
+  user_receipt_url: string;
   order_items: orderProduct[],
 }
 

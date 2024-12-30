@@ -39,7 +39,7 @@ function Sign() {
       </div>
       <div className="flex-1 px-8 lg:px-12 pt-8 pb-16">
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password-1" element={<ScreenOne />} />
           <Route path="/forgot-password-2" element={<ScreenThree />} />

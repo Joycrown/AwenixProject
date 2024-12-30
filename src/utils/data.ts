@@ -12,7 +12,7 @@ export const ingredientsItems = [
   bgColor: "#B0B0B0",
   image: soya,
   headerText: "Soya Meal",
-  body: "Soybean meal is the most important protein source used to feed farm animals. It represents two-thirds of the total world output of protein feed, including all other major oil meals and fish meal. \nSoybean meal is palatable, nutrient dense, high in digestibility, and a relatively consistent source of protein. It has an excellent amino acid profile and is a concentrated source of protein and energy... \nLike amino acid profiles of most other leguminous plants, soybean meal is low in sulfur-containing amino acids, with methionine being the most significant limiting amino acid, followed by cystine and threonine. Soybean meal however contains a relatively large amount of lysine, which is low in most plant-originated protein sources.",
+  body: "Soya meal is the most important protein source used to feed farm animals. It represents two-thirds of the total world output of protein feed, including all other major oil meals and fish meal. \nSoybean meal is palatable, nutrient dense, high in digestibility, and a relatively consistent source of protein. It has an excellent amino acid profile and is a concentrated source of protein and energy... \nLike amino acid profiles of most other leguminous plants, soybean meal is low in sulfur-containing amino acids, with methionine being the most significant limiting amino acid, followed by cystine and threonine. Soybean meal however contains a relatively large amount of lysine, which is low in most plant-originated protein sources.",
   textColor: "black"
 },
 {

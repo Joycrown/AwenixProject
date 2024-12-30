@@ -1,24 +1,27 @@
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
+interface PasswordInputProps {
+  value: string;
+  setValue: (value: string) => void;
+  id: string;
+  placeholder: string;
+  customClass: boolean;
+  required?: boolean;  // New optional prop
+}
+
 function PasswordInput({
   value,
   setValue,
   id,
   placeholder,
   customClass,
-}: {
-  value: string;
-  setValue: (value: string) => void;
-  id: string;
-  placeholder: string;
-  customClass: boolean;
-}) {
+  required = true,  // Default to false if not provided
+}: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="flex gap-3 items-center relative">
-      {/* Password */}
       <input
         type={showPassword ? "text" : "password"}
         id={id}
@@ -30,7 +33,7 @@ function PasswordInput({
         }
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        required
+        required={required}
       />
       <div
         onClick={() => setShowPassword((prev) => !prev)}
@@ -40,7 +43,7 @@ function PasswordInput({
             : "absolute right-2 cursor-pointer"
         }
       >
-        {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+         {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
       </div>
     </div>
   );

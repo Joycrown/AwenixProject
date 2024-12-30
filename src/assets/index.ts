@@ -6,7 +6,7 @@ import broilers from "./broilers.png";
 // Landing
 import mash from "./ingredients/mash.png"
 import maize from "./ingredients/maize seed.png";
-import soya from "./ingredients/soya beans.png";
+import soya from "./ingredients/soya beans.jpeg";
 import wheat from "./ingredients/wheat.png";
 import limestone from "./ingredients/limestone.png";
 import mill from "./landing/mill.png";

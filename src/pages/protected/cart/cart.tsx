@@ -9,15 +9,18 @@ function Cart() {
   const { user } = useAuthContext();
   const [cartItems, setCartItems] = useState<productProps[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isMilling, setIsMilling] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const searchParams = new URLSearchParams(location.search);
+  const [isMilling] = useState(searchParams.get('isMilling') === 'true' ? 100 : 0);
 
   const tags = ["product", "price", "quantity", "subtotal"];
 
   useEffect(() => {
     const params = new URLSearchParams(location.search).get("product");
-    setIsMilling(location.state?.isMilling ? 1000 : 0);
+    
+    // setIsMilling(location.state?.isMilling ? 100 : 0 );
     if (params) {
       const product = JSON.parse(decodeURIComponent(params));
       setCartItems(product);
@@ -41,11 +44,11 @@ function Cart() {
   };
 
   const updateCart = () => {
-    const queryString = `?product=${encodeURIComponent(
-      JSON.stringify(cartItems)
-    )}`;
+    // const queryString = `?product=${encodeURIComponent(
+    //   JSON.stringify(cartItems)
+    // )}`;
 
-    navigate(`/account/cart${queryString}`, { replace: true });
+    navigate(`/account/products/custom-order`, { replace: true });
   };
 
   const checkout = () => {
@@ -83,6 +86,8 @@ function Cart() {
       )
       .then((res) => {
         setLoading(false);
+        localStorage.removeItem('custom_order_products');
+        localStorage.removeItem('isMilling');
         navigate(
           `/account/payment/payment-status?orderId=${res.data.order_id}`
         );
