@@ -24,6 +24,7 @@ import {
   Product,
 } from "./pages/protected";
 import Preloader from "./components/preloader";
+import PaymentVerification from "./pages/protected/cart/paymentVerification";
 
 function App() {
   return (
@@ -58,6 +59,10 @@ function App() {
                 <Route
                   path="/account/payment/payment-status"
                   element={<PaymentStatus />}
+                />
+                <Route
+                  path="/account/payment/payment-verification"
+                  element={<PaymentVerification />}
                 />
                 <Route path="/account/dashboard/*" element={<Dashboard />} />
               </Route>

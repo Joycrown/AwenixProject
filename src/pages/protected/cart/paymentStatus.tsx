@@ -1,3 +1,4 @@
+// PaymentStatus.jsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../../../utils/errorTypeHandler";
 import { toast } from "react-toastify";
@@ -12,6 +13,12 @@ function PaymentStatus() {
   const { user } = useAuthContext();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const bankAccounts = [
+    { bank: "Stanbic Bank", accountNumber: "9201591101" },
+    { bank: "FCMB Bank", accountNumber: "3300994010" },
+    { bank: "First Bank", accountNumber: "2029027152" },
+  ];
 
   useEffect(() => {
     const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
@@ -33,7 +40,7 @@ function PaymentStatus() {
         setOrder({ id: params, status: "Confirmed" });
       } catch (error) {
         toast.error(getErrorMessage(error) || "Failed to get order");
-        setTimeout(() => navigate(-1), 1500); // Navigate after error message toast
+        setTimeout(() => navigate(-1), 1500);
       }
     };
 
@@ -63,31 +70,29 @@ function PaymentStatus() {
             </div>
           </div>
 
-          <h4>Make payment to any of the listed Awenix accounts</h4>
-
-          <div className="space-y-3 py-4 px-4 max-w-[500px]  w-full mx-auto">
-            <div className="flex flex-row-reverse items-center justify-between gap-1">
-              <span className="text-base">9201591101</span>
-              <span className="font-medium text-lg">Stanbic Bank</span>
-            </div>
-            <div className="flex flex-row-reverse items-center justify-between gap-1">
-              <span className="text-base">3300994010</span>
-              <span className="font-medium text-lg">FCMB Bank</span>
-            </div>
-            <div className="flex flex-row-reverse items-center justify-between gap-1">
-              <span className="text-base">2029027152</span>
-              <span className="font-medium text-lg">First Bank</span>
-            </div>
+          <h4 className="mt-6 mb-2 font-medium text-lg">Available Bank Accounts</h4>
+          <div className="space-y-3 py-4 px-4 max-w-[500px] w-full mx-auto">
+            {bankAccounts.map((account) => (
+              <div
+                key={account.accountNumber}
+                className="flex flex-row-reverse items-center justify-between gap-1"
+              >
+                <span className="text-base">{account.accountNumber}</span>
+                <span className="font-medium text-lg">{account.bank}</span>
+              </div>
+            ))}
           </div>
         </div>
 
         <Link
-          to="/account/dashboard/orders"
+          to={`/account/payment/payment-verification?orderId=${order.id}`}
           className="bg-default-500 text-white py-3 px-4 cursor-pointer rounded text-center w-full max-w-sm"
         >
-          Track Order
+          Verify Payment
         </Link>
-        <Link to="/account/home">Continue Shopping</Link>
+        {/* <Link to="/account/home" className="text-default-500 hover:text-default-600">
+          Continue Shopping
+        </Link> */}
       </div>
     </div>
   );
