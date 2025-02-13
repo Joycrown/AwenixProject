@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // PaymentVerification.jsx
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../../../utils/errorTypeHandler";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
@@ -9,9 +9,10 @@ import axios from "axios";
 import { useAuthContext } from "../../../utils/authContext";
 
 function PaymentVerification() {
-  const [order, setOrder] = useState({ id: "", status: "" });
+  const [order, setOrder] = useState({ id: "", status: "", amount: "" });
   const [selectedBank, setSelectedBank] = useState("");
   const [payeeName, setPayeeName] = useState("");
+  const [amountPaid, setAmountPaid] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const { user } = useAuthContext();
@@ -32,8 +33,8 @@ function PaymentVerification() {
         const params = new URLSearchParams(location.search).get("orderId");
 
         if (!params) {
-          throw new Error("No order found");
           navigate("/account/dashboard/orders");
+          throw new Error("No order found");
         }
 
         const res = await axios.get(`${endpoint}/orders/${params}`, {
@@ -42,7 +43,7 @@ function PaymentVerification() {
           },
         });
         
-        setOrder({ id: params, status: "Pending Verification" });
+        setOrder({ id: params, status: "Pending Verification", amount: res.data.total_price });
         
         // If payment is already verified, prefill and disable the form
         if (res.data.payment_verification) {
@@ -67,8 +68,12 @@ function PaymentVerification() {
     setPayeeName(e.target.value);
   };
 
+  const handleAmountPaidChange = (e:any) => {
+    setAmountPaid(e.target.value);
+  };
+
   const handleSubmitVerification = async () => {
-    if (!selectedBank || !payeeName) {
+    if (!selectedBank || !payeeName || !amountPaid) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -81,7 +86,8 @@ function PaymentVerification() {
         `${endpoint}/orders/${order.id}/verify-payment`,
         {
           bank: selectedBank,
-          payee_name: payeeName
+          payee_name: payeeName,
+          amount_paid: (amountPaid) // ensure numeric value
         },
         {
           headers: {
@@ -93,12 +99,12 @@ function PaymentVerification() {
       setIsVerified(true);
       toast.success("Payment verification submitted successfully");
       
-      // Redirect to track order page after successful verification
+      // Redirect to payment status page after successful verification
       setTimeout(() => {
-        navigate(`/account/dashboard/orders`);
+        navigate(`/account/payment/payment-status?orderId=${order.id}`);
       }, 2000);
     } catch (error) {
-      const errorMessage = (error as any).response?.data?.detail || "Failed to submit payment verification";
+      const errorMessage = (error as any)?.response?.data?.detail || "Failed to submit payment verification";
       toast.error(getErrorMessage(errorMessage));
     } finally {
       setIsSubmitting(false);
@@ -111,10 +117,36 @@ function PaymentVerification() {
         <div className="w-full mx-auto">
           <div className="space-y-6 max-w-[500px] w-full mx-auto px-4">
             <div className="text-center space-y-2">
-              <h4 className="text-xl font-medium text-gray-900">Payment Verification</h4>
-              <p className="text-sm text-gray-600">
-                Complete your payment verification for Order #{order.id}
-              </p>
+              <h4 className="text-xl font-medium text-gray-900">
+                Complete Your Order #{order.id} By Making Payment
+              </h4>
+            </div>
+            <div className="w-full mx-auto">
+              <div className="space-y-3 pb-4 px-4 max-w-[500px] w-full mx-auto">
+                <div className="flex flex-row-reverse items-center justify-between gap-1">
+                  <span className="text-base">₦ {order.amount}</span>
+                  <span className="font-medium text-lg">Total Amount</span>
+                </div>
+                <div className="flex flex-row-reverse items-center justify-between gap-1">
+                  <span className="text-base">Awenix Nig LTD</span>
+                  <span className="font-medium text-lg">Account Name</span>
+                </div>
+              </div>
+
+              <h4 className="mt-6 mb-2 font-medium text-lg">
+                Available Channels For Payment are as follow:
+              </h4>
+              <div className="space-y-3 py-4 px-4 max-w-[500px] w-full mx-auto">
+                {bankAccounts.map((account) => (
+                  <div
+                    key={account.accountNumber}
+                    className="flex flex-row-reverse items-center justify-between gap-1"
+                  >
+                    <span className="text-base">{account.accountNumber}</span>
+                    <span className="font-medium text-lg">{account.bank}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-4">
@@ -161,10 +193,29 @@ function PaymentVerification() {
                 />
               </div>
 
+              {/* Amount Paid Input */}
+              <div className="space-y-2">
+                <label 
+                  htmlFor="amount-paid" 
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Total Amount Paid *
+                </label>
+                <input
+                  type="number"
+                  id="amount-paid"
+                  value={amountPaid}
+                  onChange={handleAmountPaidChange}
+                  disabled={isVerified}
+                  placeholder="Enter the total amount paid"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                />
+              </div>
+
               {!isVerified && (
                 <button
                   onClick={handleSubmitVerification}
-                  disabled={isSubmitting || !selectedBank || !payeeName}
+                  disabled={isSubmitting || !selectedBank || !payeeName || !amountPaid}
                   className="w-full mt-4 bg-default-500 text-white py-2 px-4 rounded-md hover:ring-default-500 focus:outline-none focus:ring-2 focus:ring-default-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Details for Verification"}
@@ -175,21 +226,20 @@ function PaymentVerification() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-center gap-2 py-2 px-4 bg-green-50 text-green-700 rounded-md">
                     <MdCheckCircleOutline className="w-5 h-5" />
-                    <span className="text-sm">Payment verification submitted successfully</span>
+                    <span className="text-sm">
+                      Payment verification submitted successfully
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-600">Redirecting to track order page...</p>
+                  <p className="text-sm text-gray-600">
+                    Redirecting to payment status page...
+                  </p>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <Link 
-          to="/account/dashboard/orders" 
-          className="text-default-500 hover:text-default-600"
-        >
-          View All Orders
-        </Link>
+        
       </div>
     </div>
   );

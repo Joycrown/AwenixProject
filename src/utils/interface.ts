@@ -23,6 +23,12 @@ export interface orderProduct {
   total_price: number;
 }
 
+
+export interface orderCustomItem {
+  product_name:string
+  quantity: number;
+}
+
 export interface orderProps {
   order_id: string;
   total_price: number;
@@ -38,6 +44,9 @@ export interface orderProps {
   expire_at: string;
   status: string;
   user_receipt_url: string;
+  user_bank_verification:string;
+  user_payment_name:string
+  custom_order_items: orderCustomItem[]
   order_items: orderProduct[],
 }
 

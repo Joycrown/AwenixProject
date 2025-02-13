@@ -3,13 +3,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../utils/authContext";
 import { toast } from "react-toastify";
-import { orderProduct, orderProps } from "../../../utils/interface";
+import { orderProduct, orderProps, orderCustomItem } from "../../../utils/interface";
 import { months } from "../../../utils/data";
-import OrderPopup from "../../../components/orderPopup";
 import ReceiptDownload from "../../../utils/receiptDownload";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 import LoadingScreen from "../../../components/loadingScreen";
-import { FaArrowRight, FaArrowLeft} from "react-icons/fa6";
-
+import OrderPopup from "../../../components/orderPopup";
 
 const PaginationControls = ({ 
   currentPage, 
@@ -17,7 +16,7 @@ const PaginationControls = ({
   onPageChange,
   hasNext,
   hasPrevious
-}:any) => {
+}: any) => {
   return (
     <div className="flex items-center justify-center gap-2 mt-4">
       <button
@@ -49,7 +48,9 @@ function Orders() {
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<orderProps[]>([]);
+  // Separate state variables for the two lists
   const [orderItems, setOrderItems] = useState<orderProduct[]>([]);
+  const [customOrderItems, setCustomOrderItems] = useState<orderCustomItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [hasNext, setHasNext] = useState(false);
@@ -69,6 +70,7 @@ function Orders() {
       .then((res) => {
         const responseData = res.data;
         setOrders(responseData.items);
+        // Adjust based on how your backend returns pagination data:
         setTotalPages(responseData.pages);
         setHasNext(responseData.has_next);
         setHasPrevious(responseData.has_previous);
@@ -76,7 +78,7 @@ function Orders() {
       })
       .catch((err) => {
         console.log(err.response);
-        if (err.response.status == 400) {
+        if (err.response.status === 400) {
           toast.error(err?.response?.data?.detail);
         }
         setLoading(false);
@@ -91,8 +93,6 @@ function Orders() {
     setCurrentPage(newPage);
   };
 
- 
-
   return (
     <div className="flex flex-col h-full w-full">
       {/* Header Section - Fixed */}
@@ -102,15 +102,17 @@ function Orders() {
       </div>
 
       {/* Table Section - Scrollable */}
-      <div className="flex-grow overflow-auto min-h-0">
+      <div className="flex-grow overflow-x-auto min-h-0">
         <div className="w-full">
-          <table className="border-separate border-spacing-y-2 text-sm w-full min-w-[600px]">
+          <table className="border-separate border-spacing-y-2 text-sm w-full min-w-[900px]">
             <thead className="bg-default-500 text-white rounded sticky top-0">
               <tr>
                 <th className="text-start p-4">Order ID</th>
                 <th className="text-start px-4">Time</th>
                 <th className="text-start px-4">Date</th>
-                <th className="text-start px-4">Total Price</th>
+                <th className="text-start px-4">Total Price(₦)</th>
+                <th className="text-start px-4">Bank Paid to</th>
+                <th className="text-start px-4">Paid by</th>
                 <th className="text-center">Status</th>
                 <th className="text-center">Action</th>
               </tr>
@@ -123,7 +125,10 @@ function Orders() {
                   total_price,
                   status,
                   order_items,
+                  custom_order_items,
                   user_receipt_url,
+                  user_payment_name,
+                  user_bank_verification,
                 }: orderProps) => (
                   <tr key={order_id}>
                     <td className="td-class p-4 suspended-text">{order_id}</td>
@@ -140,10 +145,20 @@ function Orders() {
                       {new Date(created_at).getFullYear()}
                     </td>
                     <td className="td-class p-4 suspended-text">
-                      ₦ {total_price.toLocaleString("en-gb")}
+                      {total_price.toLocaleString("en-gb")}
+                    </td>
+                    <td className="td-class p-4 suspended-text">
+                      {user_bank_verification}
+                    </td>
+                    <td className="td-class p-4 suspended-text">
+                      {user_payment_name}
                     </td>
                     <td
-                      onClick={() => setOrderItems(order_items)}
+                      // Set the two lists separately when clicking the status
+                      onClick={() => {
+                        setOrderItems(order_items);
+                        setCustomOrderItems(custom_order_items);
+                      }}
                       className="td-class p-4 flex cursor-pointer"
                     >
                       <span
@@ -181,8 +196,16 @@ function Orders() {
         />
       </div>
 
-      {orderItems.length >= 1 && (
-        <OrderPopup items={orderItems} closeFn={() => setOrderItems([])} />
+      {/* Render the popup if there are any items */}
+      {(orderItems.length > 0 || customOrderItems.length > 0) && (
+        <OrderPopup
+          orderItems={orderItems}
+          customOrderItems={customOrderItems}
+          closeFn={() => {
+            setOrderItems([]);
+            setCustomOrderItems([]);
+          }}
+        />
       )}
     </div>
   );
