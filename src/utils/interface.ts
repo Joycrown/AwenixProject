@@ -20,6 +20,7 @@ export interface orderProduct {
   };
   quantity: number;
   price_per_unit: number;
+  miscellaneous:number,
   total_price: number;
 }
 
@@ -27,7 +28,18 @@ export interface orderProduct {
 export interface orderCustomItem {
   product_name:string
   quantity: number;
+  size: string
 }
+
+
+export interface PaymentOut {
+  payment_option: string
+  bank: string
+  payee_name: string
+  delivery_person: string
+  amount_paid: number
+}
+
 
 export interface orderProps {
   order_id: string;
@@ -48,6 +60,7 @@ export interface orderProps {
   user_payment_name:string
   custom_order_items: orderCustomItem[]
   order_items: orderProduct[],
+  payment:PaymentOut
 }
 
 export interface userProps {

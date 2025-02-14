@@ -1,5 +1,7 @@
+// CustomOrder.tsx
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { grains } from "../../../assets";
 import { useEffect, useState } from "react";
 import { productProps } from "../../../utils/interface";
@@ -7,39 +9,85 @@ import { useAuthContext } from "../../../utils/authContext";
 import LoadingScreen from "../../../components/loadingScreen";
 
 const STORAGE_KEY = "custom_order_products";
+const SERVICES_STORAGE_KEY = "custom_order_services";
 
-// Separate interface for custom products
 interface CustomProduct {
   id: number;
   name: string;
   quantity: number;
+  displayValue?: string;  // Add this
   size: string;
   hidden: boolean;
   isCustom: boolean;
 }
 
-// Union type for all product types in our list
-type ProductListItem = productProps | CustomProduct;
+interface Service {
+  id: number;
+  name: string;
+  price: number;
+  selected: boolean;
+}
+
+type ProductListItem = (productProps & {
+  quantity: number;
+  displayValue?: string;  // Add this for handling intermediate input states
+  hidden: boolean;
+}) | CustomProduct;
+
+// Interface for custom product form state
+interface CustomProductForm {
+  name: string;
+  quantity: string;  // Keep as string for form input
+}
+
 
 function CustomOrder() {
   const { user } = useAuthContext();
   const [products, setProducts] = useState<ProductListItem[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showCustomForm, setShowCustomForm] = useState(false);
-  const [customProduct, setCustomProduct] = useState({
-    name: "",
-    quantity: "",
-  });
+  const [showMillingDialog, setShowMillingDialog] = useState(false);
+  const [customProduct, setCustomProduct] = useState<CustomProductForm>({
+      name: "",
+      quantity: "",
+    });
   const pageMax = 8;
   const navigate = useNavigate();
+  const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
 
   useEffect(() => {
-    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
     setLoading(true);
 
+    // Fetch milling service
     axios
-      .get(`${endpoint}/products?search=`, {
+      .get<Service>(`${endpoint}/services/name/milling`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
+      .then((res) => {
+        const savedServices = localStorage.getItem(SERVICES_STORAGE_KEY);
+        if (savedServices) {
+          const parsedServices = JSON.parse(savedServices);
+          setServices([
+            {
+              ...res.data,
+              selected: parsedServices.some(
+                (s: Service) => s.id === res.data.id && s.selected === true
+              ),
+            },
+          ]);
+        } else {
+          setServices([{ ...res.data, selected: false }]);
+        }
+      })
+      .catch(console.error);
+
+    // Then fetch products
+    axios
+      .get<productProps[]>(`${endpoint}/products?search=`, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Bearer ${user.accessToken}`,
@@ -51,8 +99,8 @@ function CustomOrder() {
           const parsedProducts = JSON.parse(savedProducts);
           setProducts(() => [
             ...res.data.map((data: productProps) => {
-              const savedProduct = parsedProducts.find((p: ProductListItem) => 
-                'id' in p && p.id === data.id
+              const savedProduct = parsedProducts.find((p: ProductListItem) =>
+                "id" in p && p.id === data.id
               );
               return {
                 ...data,
@@ -60,15 +108,16 @@ function CustomOrder() {
                 hidden: savedProduct ? savedProduct.hidden : true,
               };
             }),
-            ...parsedProducts.filter((p: ProductListItem) => 
-              'isCustom' in p && p.isCustom
+            ...parsedProducts.filter(
+              (p: ProductListItem) => "isCustom" in p && p.isCustom
             ),
           ]);
         } else {
           setProducts(() =>
             res.data.map((data: productProps) => ({
               ...data,
-              quantity: 1,
+              quantity: 0,
+              displayValue: "",
               hidden: true,
             }))
           );
@@ -79,7 +128,7 @@ function CustomOrder() {
         setLoading(false);
         console.error(err);
       });
-  }, [user]);
+  }, [user, endpoint]);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -87,67 +136,160 @@ function CustomOrder() {
     }
   }, [products]);
 
-  const changeQuantity = (currentValue: string, id: number) => {
-    const valueConstruct = parseInt(currentValue) <= 1 ? 1 : parseInt(currentValue);
-
-    setProducts((prev) =>
-      prev.map((value, index) =>
-        index === id ? { ...value, quantity: valueConstruct } : value
-      )
-    );
-  };
-  const handleCustomQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Allow empty string or valid numbers
-    if (value === "" || /^\d+$/.test(value)) {
-      setCustomProduct(prev => ({
-        ...prev,
-        quantity: value
-      }));
+  useEffect(() => {
+    if (services.length > 0) {
+      localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
     }
+  }, [services]);
+
+  const addService = (serviceId: number) => {
+    setServices((prev) =>
+      prev.map((service) =>
+        service.id === serviceId ? { ...service, selected: true } : service
+      )
+    );
+    // Local storage will be updated by the useEffect.
   };
 
-  const addProduct = (id: number) => {
-    setProducts((prev) =>
-      prev.map((value, index) =>
-        index === id ? { ...value, hidden: false, quantity: 1 } : value
+  const removeService = (serviceId: number) => {
+    setServices((prev) =>
+      prev.map((service) =>
+        service.id === serviceId ? { ...service, selected: false } : service
       )
     );
   };
 
-  const removeProduct = (id: number) => {
+  // Helper function to validate and parse quantity
+  const parseQuantity = (value: string): number | null => {
+    if (!value) return null;
+    if (!/^\d*\.?\d*$/.test(value)) return null;
+    const parsed = parseFloat(value);
+    if (isNaN(parsed) || parsed < 0) return null;
+    return Math.round(parsed * 100) / 100;
+  };
+
+
+  const changeQuantity = (currentValue: string, id: number) => {
     setProducts((prev) =>
-      prev.map((value, index) =>
-        index === id ? { ...value, hidden: true, quantity: 1 } : value
-      )
+      prev.map((value, index) => {
+        if (index !== id) return value;
+  
+        // Always update the display value while typing
+        const updatedProduct = { ...value, displayValue: currentValue };
+  
+        // If empty, set quantity to 0 but keep display value empty
+        if (currentValue === "") {
+          return { ...updatedProduct, quantity: 0 };
+        }
+  
+        // Validate the input format
+        if (!/^\d*\.?\d*$/.test(currentValue)) {
+          return value;
+        }
+  
+        // If it's just a decimal point after a number, keep the current quantity
+        if (currentValue.endsWith('.')) {
+          return updatedProduct;
+        }
+  
+        const parsedValue = parseFloat(currentValue);
+        if (!isNaN(parsedValue) && parsedValue >= 0) {
+          return { ...updatedProduct, quantity: parsedValue };
+        }
+  
+        return value;
+      })
     );
   };
+
+  const handleCustomQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  
+  // More permissive validation that allows typing decimal points
+  if (value === "" || /^\d*\.?\d*$/.test(value)) {
+    setCustomProduct((prev) => ({
+      ...prev,
+      quantity: value,
+    }));
+  }
+};
+
+const addProduct = (id: number) => {
+  setProducts((prev) =>
+    prev.map((value, index) =>
+      index === id ? { ...value, hidden: false, quantity: 0, displayValue: "" } : value
+    )
+  );
+};
+
+// Update the removeProduct function
+const removeProduct = (id: number) => {
+  setProducts((prev) =>
+    prev.map((value, index) =>
+      index === id ? { ...value, hidden: true, quantity: 0, displayValue: "" } : value
+    )
+  );
+};
 
   const addCustomProduct = () => {
     if (customProduct.name.trim()) {
+      const parsedQuantity = parseQuantity(customProduct.quantity) ?? 1;
+
       const newCustomProduct: CustomProduct = {
         id: Date.now(),
         name: customProduct.name,
-        quantity: customProduct.quantity === "" ? 1 : parseInt(customProduct.quantity), // Default to 1 if empty
+        quantity: parsedQuantity,
         size: "kg",
         hidden: false,
         isCustom: true,
       };
 
       setProducts((prev) => [...prev, newCustomProduct]);
-      setCustomProduct({ name: "", quantity: "" }); // Reset to empty string
+      setCustomProduct({ name: "", quantity: "" });
       setShowCustomForm(false);
     }
   };
 
-  const headToCart = () => {
+  // proceedToCart accepts an optional updatedServices array.
+  const proceedToCart = (updatedServices?: Service[]) => {
     const list = products.filter(
       ({ hidden, quantity }) => hidden === false && quantity >= 1
     );
+    const selectedServices = (updatedServices || services).filter(
+      (s) => s.selected
+    );
+
+    // Attach the selected services to each product.
+    const productsWithServices = list.map((product) => ({
+      ...product,
+      services: selectedServices,
+    }));
+
     const queryString = `?product=${encodeURIComponent(
-      JSON.stringify(list)
-    )}&isMilling=true`;
+      JSON.stringify(productsWithServices)
+    )}`;
     navigate(`/account/cart${queryString}`);
+  };
+
+  const headToCart = () => {
+    const millingService = services.find((s) =>
+      s.name.toLowerCase().includes("milling")
+    );
+    const isMilling = millingService?.selected ?? false;
+    const hasProducts = products.some((p) => !p.hidden);
+
+    if (!hasProducts) {
+      toast.error("Please select at least one product");
+      return;
+    }
+
+    // If milling service is not selected, show the modal.
+    if (!isMilling) {
+      setShowMillingDialog(true);
+      return;
+    }
+
+    proceedToCart();
   };
 
   return (
@@ -173,6 +315,7 @@ function CustomOrder() {
             </p>
           </div>
 
+          {/* Products Section */}
           <div className="space-y-4">
             <div className="space-y-2">
               <h4 className="font-medium">Select your mains</h4>
@@ -208,7 +351,7 @@ function CustomOrder() {
                 <div className="w-24">
                   <label className="block mb-2">Quantity (KG)</label>
                   <input
-                    type="text" // Changed from "number" to "text" for better control
+                    type="text"
                     value={customProduct.quantity}
                     onChange={handleCustomQuantityChange}
                     className="border border-default-700 px-3 py-2 rounded w-full"
@@ -218,13 +361,58 @@ function CustomOrder() {
                 <button
                   onClick={addCustomProduct}
                   className="bg-default-500 text-white px-4 py-2 rounded"
-                  disabled={!customProduct.name.trim() || customProduct.quantity === "0" || customProduct.quantity === ""}
+                  disabled={
+                    !customProduct.name.trim() ||
+                    customProduct.quantity === "0" ||
+                    customProduct.quantity === ""
+                  }
                 >
                   Add
                 </button>
               </div>
             )}
 
+            {/* Services Section */}
+            <div className="space-y-4">
+              {services.length >= 1 ? (
+                <div className="flex flex-col gap-4">
+                  {services.map((service) => (
+                    <div
+                      key={service.id}
+                      className="flex items-center justify-between md:min-w-[400px]"
+                    >
+                      <span className="flex gap-3 items-center">
+                        <span className="capitalize">{service.name}</span>
+                        <span>
+                          ₦{service.price.toLocaleString("en-gb")}/kg
+                        </span>
+                      </span>
+                      <div className="flex items-center gap-4">
+                        {!service.selected ? (
+                          <span
+                            onClick={() => addService(service.id)}
+                            className="font-medium cursor-pointer px-3 py-2 bg-default-500 text-white rounded"
+                          >
+                            Add Service
+                          </span>
+                        ) : (
+                          <span
+                            onClick={() => removeService(service.id)}
+                            className="font-medium cursor-pointer px-3 py-2 bg-default-500 text-white rounded"
+                          >
+                            Remove
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center">No services available</p>
+              )}
+            </div>
+
+            {/* Products List */}
             {products.length >= 1 ? (
               <div className="flex flex-col gap-4">
                 {products
@@ -235,10 +423,13 @@ function CustomOrder() {
                       className="flex items-center justify-between md:min-w-[400px]"
                     >
                       <span className="flex gap-3 items-center">
-                        <span className="capitalize truncate">{product.name}</span>
-                        {!('isCustom' in product) && (
+                        <span className="capitalize truncate">
+                          {product.name}
+                        </span>
+                        {!("isCustom" in product) && (
                           <span>
-                            +₦ {product.price.toLocaleString("en-gb")}/{product.size}
+                            +₦ {product.price.toLocaleString("en-gb")}/
+                            {product.size}
                           </span>
                         )}
                       </span>
@@ -254,10 +445,12 @@ function CustomOrder() {
                           <>
                             <input
                               className="border border-default-700 px-3 py-2 rounded max-w-20"
-                              value={product.quantity}
+                              value={product.displayValue ?? product.quantity.toString()}
                               onChange={(e) => changeQuantity(e.target.value, id)}
-                              maxLength={4}
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
+                              pattern="\d*\.?\d*"
+                              placeholder="0"
                             />
                             <span
                               onClick={() => removeProduct(id)}
@@ -277,7 +470,9 @@ function CustomOrder() {
             <div className="flex justify-between">
               {page > 1 && (
                 <span
-                  onClick={() => setPage((prev) => (prev !== 1 ? prev - 1 : 1))}
+                  onClick={() =>
+                    setPage((prev) => (prev !== 1 ? prev - 1 : 1))
+                  }
                   className="underline underline-offset-8 cursor-pointer"
                 >
                   &lt;&lt; Previous
@@ -307,6 +502,54 @@ function CustomOrder() {
           </div>
         </div>
       </div>
+
+      {/* Milling Service Modal */}
+      {showMillingDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-2">
+              Add Milling Service?
+            </h3>
+            <p className="text-gray-600 mb-4">
+              We noticed you haven't selected the milling service. Would you
+              like to add milling service to your order? This service helps
+              process your grains properly.
+            </p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => {
+                  setShowMillingDialog(false);
+                  proceedToCart();
+                }}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              >
+                No, proceed without milling
+              </button>
+              <button
+                onClick={() => {
+                  // Compute the updated services array with milling selected.
+                  const updatedServices = services.map((s) =>
+                    s.name.toLowerCase().includes("milling")
+                      ? { ...s, selected: true }
+                      : s
+                  );
+                  // Persist updated services immediately.
+                  localStorage.setItem(
+                    SERVICES_STORAGE_KEY,
+                    JSON.stringify(updatedServices)
+                  );
+                  setServices(updatedServices);
+                  setShowMillingDialog(false);
+                  proceedToCart(updatedServices);
+                }}
+                className="px-4 py-2 bg-default-500 text-white rounded hover:bg-default-600"
+              >
+                Yes, add milling service
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

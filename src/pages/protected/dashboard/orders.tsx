@@ -3,19 +3,20 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../utils/authContext";
 import { toast } from "react-toastify";
-import { orderProduct, orderProps, orderCustomItem } from "../../../utils/interface";
+import { orderProps } from "../../../utils/interface";
 import { months } from "../../../utils/data";
 import ReceiptDownload from "../../../utils/receiptDownload";
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 import LoadingScreen from "../../../components/loadingScreen";
 import OrderPopup from "../../../components/orderPopup";
 
-const PaginationControls = ({ 
-  currentPage, 
-  totalPages, 
+
+const PaginationControls = ({
+  currentPage,
+  totalPages,
   onPageChange,
   hasNext,
-  hasPrevious
+  hasPrevious,
 }: any) => {
   return (
     <div className="flex items-center justify-center gap-2 mt-4">
@@ -27,11 +28,11 @@ const PaginationControls = ({
         <FaArrowLeft className="w-4 h-4" />
         Previous
       </button>
-      
+
       <span className="px-4 py-1 text-sm bg-slate-100 rounded">
         Page {currentPage} of {totalPages}
       </span>
-      
+
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!hasNext}
@@ -48,17 +49,19 @@ function Orders() {
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<orderProps[]>([]);
-  // Separate state variables for the two lists
-  const [orderItems, setOrderItems] = useState<orderProduct[]>([]);
-  const [customOrderItems, setCustomOrderItems] = useState<orderCustomItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [hasNext, setHasNext] = useState(false);
   const [hasPrevious, setHasPrevious] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<orderProps | null>(null);
+  const [cancelModal, setCancelModal] = useState<{ open: boolean; orderId: string | null }>({
+    open: false,
+    orderId: null,
+  });
   const itemsPerPage = 5;
+  const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
 
   const fetchOrders = (page: number) => {
-    const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
     setLoading(true);
     axios
       .get(`${endpoint}/orders/me?page=${page}&size=${itemsPerPage}`, {
@@ -70,19 +73,16 @@ function Orders() {
       .then((res) => {
         const responseData = res.data;
         setOrders(responseData.items);
-        // Adjust based on how your backend returns pagination data:
         setTotalPages(responseData.pages);
         setHasNext(responseData.has_next);
         setHasPrevious(responseData.has_previous);
-        setLoading(false);
       })
       .catch((err) => {
-        console.log(err.response);
-        if (err.response.status === 400) {
+        if (err?.response?.status === 400) {
           toast.error(err?.response?.data?.detail);
         }
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -93,99 +93,119 @@ function Orders() {
     setCurrentPage(newPage);
   };
 
+  // Open the cancel modal
+  const openCancelModal = (orderId: string) => {
+    setCancelModal({ open: true, orderId });
+  };
+
+  // Cancel order after user confirms via modal
+  const handleConfirmCancel = async () => {
+    if (!cancelModal.orderId) return;
+    const orderId = cancelModal.orderId;
+    setLoading(true);
+    try {
+      await axios.delete(`${endpoint}/orders/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
+      toast.success("Order canceled successfully");
+      // Remove canceled order from state
+      setOrders((prev) => prev.filter((o) => o.order_id !== orderId));
+    } catch (err: any) {
+      toast.error(err?.response?.data?.detail || "Unable to cancel order. Please try again.");
+    } finally {
+      setLoading(false);
+      setCancelModal({ open: false, orderId: null });
+    }
+  };
+
   return (
     <div className="flex flex-col h-full w-full">
-      {/* Header Section - Fixed */}
+      {/* Header Section */}
       <div className="flex-none">
         <h4 className="text-default-400 text-xl mb-4">Orders</h4>
         {loading && <LoadingScreen />}
       </div>
 
-      {/* Table Section - Scrollable */}
+      {/* Table Section - Wrapped in a container with vertical scrolling */}
       <div className="flex-grow overflow-x-auto min-h-0">
         <div className="w-full">
-          <table className="border-separate border-spacing-y-2 text-sm w-full min-w-[900px]">
-            <thead className="bg-default-500 text-white rounded sticky top-0">
-              <tr>
-                <th className="text-start p-4">Order ID</th>
-                <th className="text-start px-4">Time</th>
-                <th className="text-start px-4">Date</th>
-                <th className="text-start px-4">Total Price(₦)</th>
-                <th className="text-start px-4">Bank Paid to</th>
-                <th className="text-start px-4">Paid by</th>
-                <th className="text-center">Status</th>
-                <th className="text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody className="border bg-slate-100 [&>*:nth-child(even)]:bg-slate-300">
-              {orders.map(
-                ({
-                  order_id,
-                  created_at,
-                  total_price,
-                  status,
-                  order_items,
-                  custom_order_items,
-                  user_receipt_url,
-                  user_payment_name,
-                  user_bank_verification,
-                }: orderProps) => (
-                  <tr key={order_id}>
-                    <td className="td-class p-4 suspended-text">{order_id}</td>
-                    <td className="td-class p-4 suspended-text">
-                      {new Date(created_at).toLocaleTimeString("en-NG", {
-                        hour: "numeric",
-                        minute: "numeric",
-                        hour12: true,
-                      })}
-                    </td>
-                    <td className="td-class p-4 suspended-text">
-                      {new Date(created_at).getUTCDate()}{" "}
-                      {months[new Date(created_at).getMonth()]}{" "}
-                      {new Date(created_at).getFullYear()}
-                    </td>
-                    <td className="td-class p-4 suspended-text">
-                      {total_price.toLocaleString("en-gb")}
-                    </td>
-                    <td className="td-class p-4 suspended-text">
-                      {user_bank_verification}
-                    </td>
-                    <td className="td-class p-4 suspended-text">
-                      {user_payment_name}
-                    </td>
-                    <td
-                      // Set the two lists separately when clicking the status
-                      onClick={() => {
-                        setOrderItems(order_items);
-                        setCustomOrderItems(custom_order_items);
-                      }}
-                      className="td-class p-4 flex cursor-pointer"
+          <div className="overflow-y-auto" style={{ maxHeight: '500px' }}>
+            <table className="border-separate border-spacing-y-2 text-sm w-full min-w-[900px]">
+              <thead className="bg-default-500 text-white rounded sticky top-0">
+                <tr>
+                  <th className="text-start p-4">Order ID</th>
+                  <th className="text-start px-4">Time</th>
+                  <th className="text-start px-4">Date</th>
+                  <th className="text-start px-4">Total Price(₦)</th>
+                  <th className="text-center">Status</th>
+                  <th className="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody className="border bg-slate-100 [&>*:nth-child(even)]:bg-slate-300">
+                {orders.map((order: orderProps) => {
+                  const { order_id, created_at, total_price, status, user_receipt_url } = order;
+                  return (
+                    <tr
+                      key={order_id}
+                      className="cursor-pointer"
+                      onClick={() => setSelectedOrder(order)}
                     >
-                      <span
-                        className={`rounded-md ${
-                          status.toLowerCase() === "confirmed"
-                            ? "bg-green-600/50 text-green-100"
-                            : "bg-orange-600/50 text-orange-100"
-                        } px-4 py-3 text-xs font-semibold uppercase antialiased block mx-auto w-fit`}
+                      <td className="td-class p-4 suspended-text">{order_id}</td>
+                      <td className="td-class p-4 suspended-text">
+                        {new Date(created_at).toLocaleTimeString("en-NG", {
+                          hour: "numeric",
+                          minute: "numeric",
+                          hour12: true,
+                        })}
+                      </td>
+                      <td className="td-class p-4 suspended-text">
+                        {new Date(created_at).getUTCDate()}{" "}
+                        {months[new Date(created_at).getMonth()]}{" "}
+                        {new Date(created_at).getFullYear()}
+                      </td>
+                      <td className="td-class p-4 suspended-text">
+                        {total_price.toLocaleString("en-gb")}
+                      </td>
+                      <td className="td-class p-4 text-center">
+                        <span
+                          className={`rounded-md px-4 py-3 text-xs font-semibold uppercase ${
+                            status.toLowerCase() === "confirmed"
+                              ? "bg-green-600/50 text-green-100"
+                              : status.toLowerCase() === "received"
+                              ? "bg-blue-600/50 text-blue-100"
+                              : "bg-orange-600/50 text-orange-100"
+                          }`}
+                        >
+                          {status}
+                        </span>
+                      </td>
+                      <td
+                        className="td-class p-4 text-center"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        {status}
-                      </span>
-                    </td>
-                    <td className="m-1">
-                      <ReceiptDownload
-                        receiptUrl={user_receipt_url}
-                        orderId={order_id}
-                      />
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
+                        <div className="flex flex-row items-center gap-2 justify-center">
+                          <ReceiptDownload receiptUrl={user_receipt_url} orderId={order_id} />
+                          <button
+                            onClick={() => openCancelModal(order_id)}
+                            disabled={status.toLowerCase() !== "ordered"}
+                            className="text-xs px-3 py-2 bg-red-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      {/* Footer Section - Fixed */}
+      {/* Footer Section */}
       <div className="flex-none mt-4">
         <PaginationControls
           currentPage={currentPage}
@@ -196,16 +216,44 @@ function Orders() {
         />
       </div>
 
-      {/* Render the popup if there are any items */}
-      {(orderItems.length > 0 || customOrderItems.length > 0) && (
+      {/* Order Popup */}
+      {selectedOrder && (
         <OrderPopup
-          orderItems={orderItems}
-          customOrderItems={customOrderItems}
-          closeFn={() => {
-            setOrderItems([]);
-            setCustomOrderItems([]);
-          }}
+          order={selectedOrder}
+          closeFn={() => setSelectedOrder(null)}
         />
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {cancelModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black bg-opacity-70"
+            onClick={() => setCancelModal({ open: false, orderId: null })}
+          />
+          {/* Modal Box */}
+          <div className="relative bg-white p-6 rounded shadow-md w-[90%] max-w-sm">
+            <h2 className="text-lg font-bold mb-4">Cancel Order</h2>
+            <p className="text-sm mb-6">
+              Are you sure you want to cancel this order?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setCancelModal({ open: false, orderId: null })}
+                className="px-4 py-2 text-sm rounded bg-gray-300"
+              >
+                No
+              </button>
+              <button
+                onClick={handleConfirmCancel}
+                className="px-4 py-2 text-sm rounded bg-red-600 text-white"
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

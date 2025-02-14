@@ -9,10 +9,12 @@ import axios from "axios";
 import { useAuthContext } from "../../../utils/authContext";
 
 function PaymentVerification() {
-  const [order, setOrder] = useState({ id: "", status: "", amount: "" });
+  const [order, setOrder] = useState({ id: "", status: "", amount: 0 });
   const [selectedBank, setSelectedBank] = useState("");
   const [payeeName, setPayeeName] = useState("");
-  const [amountPaid, setAmountPaid] = useState(0);
+  const [amountPaid, setAmountPaid] = useState("");
+  const [deliveryPerson, setDeliveryPerson] = useState("");
+  const [paymentOption, setPaymentOption] = useState("full"); // "full", "installment", "delivery"
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const { user } = useAuthContext();
@@ -47,48 +49,86 @@ function PaymentVerification() {
         
         // If payment is already verified, prefill and disable the form
         if (res.data.payment_verification) {
-          setSelectedBank(res.data.payment_verification.bank);
-          setPayeeName(res.data.payment_verification.payee_name);
+          const verification = res.data.payment_verification;
+          // If a payment_option is returned, set it accordingly.
+          if (verification.payment_option === "delivery") {
+            setPaymentOption("delivery");
+            setDeliveryPerson(verification.delivery_person || "");
+          } else if (verification.payment_option === "installment") {
+            setPaymentOption("installment");
+            setSelectedBank(verification.bank);
+            setPayeeName(verification.payee_name);
+            setAmountPaid(verification.amount_paid);
+          } else {
+            // Default to full payment
+            setPaymentOption("full");
+            setSelectedBank(verification.bank);
+            setPayeeName(verification.payee_name);
+            setAmountPaid(verification.amount_paid);
+          }
           setIsVerified(true);
         }
       } catch (error) {
         toast.error(getErrorMessage(error) || "Failed to get order");
-        navigate("/account/dashboard/orders");
+        // navigate("/account/dashboard/orders");
       }
     };
 
     getOrder();
   }, [location, navigate, user]);
 
-  const handleBankChange = (e:any) => {
+  const handleBankChange = (e: any) => {
     setSelectedBank(e.target.value);
   };
 
-  const handlePayeeNameChange = (e:any) => {
+  const handlePayeeNameChange = (e: any) => {
     setPayeeName(e.target.value);
   };
 
-  const handleAmountPaidChange = (e:any) => {
+  const handleAmountPaidChange = (e: any) => {
     setAmountPaid(e.target.value);
   };
 
+  const handleDeliveryPersonChange = (e: any) => {
+    setDeliveryPerson(e.target.value);
+  };
+
   const handleSubmitVerification = async () => {
-    if (!selectedBank || !payeeName || !amountPaid) {
-      toast.error("Please fill in all required fields");
-      return;
+    // Validate fields based on payment option
+    if (paymentOption === "full" || paymentOption === "installment") {
+      if (!selectedBank || !payeeName || !amountPaid) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+      // For full payment, ensure the paid amount equals the order total
+      // if (paymentOption === "full" && parseFloat(amountPaid) !== parseFloat(order.amount)) {
+      //   toast.error("Full payment amount must equal the total order amount");
+      //   return;
+      // }
+    } else if (paymentOption === "delivery") {
+      if (!deliveryPerson) {
+        toast.error("Please provide the name of the person taking delivery");
+        return;
+      }
     }
   
     setIsSubmitting(true);
     const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
   
     try {
+      // Prepare payload based on payment option
+      const payload: any = { payment_option: paymentOption };
+      if (paymentOption === "delivery") {
+        payload.delivery_person = deliveryPerson;
+      } else {
+        payload.bank = selectedBank;
+        payload.payee_name = payeeName;
+        payload.amount_paid = parseFloat(amountPaid);
+      }
+  
       await axios.put(
         `${endpoint}/orders/${order.id}/verify-payment`,
-        {
-          bank: selectedBank,
-          payee_name: payeeName,
-          amount_paid: (amountPaid) // ensure numeric value
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${user.accessToken}`,
@@ -121,101 +161,184 @@ function PaymentVerification() {
                 Complete Your Order #{order.id} By Making Payment
               </h4>
             </div>
-            <div className="w-full mx-auto">
-              <div className="space-y-3 pb-4 px-4 max-w-[500px] w-full mx-auto">
-                <div className="flex flex-row-reverse items-center justify-between gap-1">
-                  <span className="text-base">₦ {order.amount}</span>
-                  <span className="font-medium text-lg">Total Amount</span>
-                </div>
-                <div className="flex flex-row-reverse items-center justify-between gap-1">
-                  <span className="text-base">Awenix Nig LTD</span>
-                  <span className="font-medium text-lg">Account Name</span>
-                </div>
-              </div>
 
-              <h4 className="mt-6 mb-2 font-medium text-lg">
-                Available Channels For Payment are as follow:
-              </h4>
-              <div className="space-y-3 py-4 px-4 max-w-[500px] w-full mx-auto">
-                {bankAccounts.map((account) => (
-                  <div
-                    key={account.accountNumber}
-                    className="flex flex-row-reverse items-center justify-between gap-1"
-                  >
-                    <span className="text-base">{account.accountNumber}</span>
-                    <span className="font-medium text-lg">{account.bank}</span>
-                  </div>
-                ))}
+            {/* Payment Option Selection */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Select Payment Option *
+              </label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="paymentOption"
+                    value="full"
+                    checked={paymentOption === "full"}
+                    onChange={(e) => setPaymentOption(e.target.value)}
+                    disabled={isVerified}
+                    className="mr-2"
+                  />
+                  <span>Full Payment</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="paymentOption"
+                    value="installment"
+                    checked={paymentOption === "installment"}
+                    onChange={(e) => setPaymentOption(e.target.value)}
+                    disabled={isVerified}
+                    className="mr-2"
+                  />
+                  <span>Installment Payment</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="paymentOption"
+                    value="delivery"
+                    checked={paymentOption === "delivery"}
+                    onChange={(e) => setPaymentOption(e.target.value)}
+                    disabled={isVerified}
+                    className="mr-2"
+                  />
+                  <span>Payment on Carriage/Delivery</span>
+                </label>
               </div>
             </div>
 
-            <div className="space-y-4">
-              {/* Bank Selection */}
-              <div className="space-y-2">
-                <label 
-                  htmlFor="bank-select" 
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Bank Account Used for Payment *
-                </label>
-                <select
-                  id="bank-select"
-                  value={selectedBank}
-                  onChange={handleBankChange}
-                  disabled={isVerified}
-                  className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <option value="">Select the bank you paid to</option>
-                  {bankAccounts.map((account) => (
-                    <option key={account.accountNumber} value={account.bank}>
-                      {account.bank} - {account.accountNumber}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {/** For Full and Installment Payments, show bank details and amount fields **/}
+            {(paymentOption === "full" || paymentOption === "installment") && (
+              <>
+                <div className="w-full mx-auto">
+                  <div className="space-y-3 pb-4 px-4 max-w-[500px] w-full mx-auto">
+                    <div className="flex flex-row-reverse items-center justify-between gap-1">
+                      <span className="text-base">₦ {order.amount}</span>
+                      <span className="font-medium text-lg">Total Amount</span>
+                    </div>
+                    <div className="flex flex-row-reverse items-center justify-between gap-1">
+                      <span className="text-base">Awenix Nig LTD</span>
+                      <span className="font-medium text-lg">Account Name</span>
+                    </div>
+                  </div>
 
-              {/* Payee Name Input */}
+                  <h4 className="mt-6 mb-2 font-medium text-lg">
+                    Available Channels For Payment are as follow:
+                  </h4>
+                  <div className="space-y-3 py-4 px-4 max-w-[500px] w-full mx-auto">
+                    {bankAccounts.map((account) => (
+                      <div
+                        key={account.accountNumber}
+                        className="flex flex-row-reverse items-center justify-between gap-1"
+                      >
+                        <span className="text-base">{account.accountNumber}</span>
+                        <span className="font-medium text-lg">{account.bank}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bank Selection */}
+                <div className="space-y-2">
+                  <label 
+                    htmlFor="bank-select" 
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Bank Account Used for Payment *
+                  </label>
+                  <select
+                    id="bank-select"
+                    value={selectedBank}
+                    onChange={handleBankChange}
+                    disabled={isVerified}
+                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select the bank you paid to</option>
+                    {bankAccounts.map((account) => (
+                      <option key={account.accountNumber} value={account.bank}>
+                        {account.bank} - {account.accountNumber}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Payee Name Input */}
+                <div className="space-y-2">
+                  <label 
+                    htmlFor="payee-name" 
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Name Used for Payment *
+                  </label>
+                  <input
+                    type="text"
+                    id="payee-name"
+                    value={payeeName}
+                    onChange={handlePayeeNameChange}
+                    disabled={isVerified}
+                    placeholder="Enter the name you used for the transfer"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  />
+                </div>
+
+                {/* Amount Paid Input */}
+                <div className="space-y-2">
+                  <label 
+                    htmlFor="amount-paid" 
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Total Amount Paid *
+                  </label>
+                  <input
+                    type="number"
+                    id="amount-paid"
+                    value={amountPaid}
+                    onChange={handleAmountPaidChange}
+                    disabled={isVerified}
+                    placeholder="Enter the total amount paid"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  />
+                  {paymentOption === "full" && (
+                    <p className="text-xs text-gray-500">
+                      Note: For full payment, the amount must equal ₦ {order.amount}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/** For Payment on Carriage/Delivery, show a different input **/}
+            {paymentOption === "delivery" && (
               <div className="space-y-2">
                 <label 
-                  htmlFor="payee-name" 
+                  htmlFor="delivery-person" 
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Name Used for Payment *
+                  Person Taking Delivery *
                 </label>
                 <input
                   type="text"
-                  id="payee-name"
-                  value={payeeName}
-                  onChange={handlePayeeNameChange}
+                  id="delivery-person"
+                  value={deliveryPerson}
+                  onChange={handleDeliveryPersonChange}
                   disabled={isVerified}
-                  placeholder="Enter the name you used for the transfer"
+                  placeholder="Enter the name of the person taking delivery"
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
               </div>
+            )}
 
-              {/* Amount Paid Input */}
-              <div className="space-y-2">
-                <label 
-                  htmlFor="amount-paid" 
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Total Amount Paid *
-                </label>
-                <input
-                  type="number"
-                  id="amount-paid"
-                  value={amountPaid}
-                  onChange={handleAmountPaidChange}
-                  disabled={isVerified}
-                  placeholder="Enter the total amount paid"
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                />
-              </div>
-
+            {/* Submit Button / Verified Message */}
+            <div className="space-y-4">
               {!isVerified && (
                 <button
                   onClick={handleSubmitVerification}
-                  disabled={isSubmitting || !selectedBank || !payeeName || !amountPaid}
+                  disabled={
+                    isSubmitting ||
+                    ((paymentOption === "full" || paymentOption === "installment") &&
+                      (!selectedBank || !payeeName || !amountPaid)) ||
+                    (paymentOption === "delivery" && !deliveryPerson)
+                  }
                   className="w-full mt-4 bg-default-500 text-white py-2 px-4 rounded-md hover:ring-default-500 focus:outline-none focus:ring-2 focus:ring-default-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Details for Verification"}
@@ -238,8 +361,6 @@ function PaymentVerification() {
             </div>
           </div>
         </div>
-
-        
       </div>
     </div>
   );
