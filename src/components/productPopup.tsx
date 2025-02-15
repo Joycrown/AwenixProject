@@ -7,7 +7,7 @@ interface productPopProps extends Omit<productProps, "quantity" | "image"> {}
 
 function ProductPopup(props: productPopProps) {
   const { price, name, description, closeFn, size } = props;
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
 
   const removeQuantity = () => {
@@ -24,10 +24,10 @@ function ProductPopup(props: productPopProps) {
       setQuantity(0);
       return;
     }
-    const digit = parseInt(value.replace(/\D/g, ""));
-    const valueConstruct = digit <= 1 ? 1 : digit;
-
-    setQuantity(valueConstruct);
+    const parsedValue = parseFloat(value);
+    if (!isNaN(parsedValue)) {
+      setQuantity(parsedValue);
+    }
   };
 
   const headToCart = () => {
@@ -68,8 +68,8 @@ function ProductPopup(props: productPopProps) {
               -
             </div>
             <input
-              type="tel"
-              maxLength={4}
+              type="number"
+              step="any"
               value={quantity}
               onChange={(e) => changeQuantity(e.target.value)}
               className="border-t border-b outline-none text-center max-w-16"

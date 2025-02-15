@@ -14,7 +14,8 @@ function PaymentVerification() {
   const [payeeName, setPayeeName] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
   const [deliveryPerson, setDeliveryPerson] = useState("");
-  const [paymentOption, setPaymentOption] = useState("full"); // "full", "installment", "delivery"
+  // Only two options: "full" and "delivery"
+  const [paymentOption, setPaymentOption] = useState("full");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const { user } = useAuthContext();
@@ -50,17 +51,11 @@ function PaymentVerification() {
         // If payment is already verified, prefill and disable the form
         if (res.data.payment_verification) {
           const verification = res.data.payment_verification;
-          // If a payment_option is returned, set it accordingly.
           if (verification.payment_option === "delivery") {
             setPaymentOption("delivery");
             setDeliveryPerson(verification.delivery_person || "");
-          } else if (verification.payment_option === "installment") {
-            setPaymentOption("installment");
-            setSelectedBank(verification.bank);
-            setPayeeName(verification.payee_name);
-            setAmountPaid(verification.amount_paid);
           } else {
-            // Default to full payment
+            // Treat any other option (including installment) as full payment
             setPaymentOption("full");
             setSelectedBank(verification.bank);
             setPayeeName(verification.payee_name);
@@ -95,13 +90,13 @@ function PaymentVerification() {
 
   const handleSubmitVerification = async () => {
     // Validate fields based on payment option
-    if (paymentOption === "full" || paymentOption === "installment") {
+    if (paymentOption === "full") {
       if (!selectedBank || !payeeName || !amountPaid) {
         toast.error("Please fill in all required fields");
         return;
       }
-      // For full payment, ensure the paid amount equals the order total
-      // if (paymentOption === "full" && parseFloat(amountPaid) !== parseFloat(order.amount)) {
+      // For full payment, you can also validate that the amount matches the order total if needed.
+      // if (parseFloat(amountPaid) !== parseFloat(order.amount)) {
       //   toast.error("Full payment amount must equal the total order amount");
       //   return;
       // }
@@ -184,18 +179,6 @@ function PaymentVerification() {
                   <input
                     type="radio"
                     name="paymentOption"
-                    value="installment"
-                    checked={paymentOption === "installment"}
-                    onChange={(e) => setPaymentOption(e.target.value)}
-                    disabled={isVerified}
-                    className="mr-2"
-                  />
-                  <span>Installment Payment</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentOption"
                     value="delivery"
                     checked={paymentOption === "delivery"}
                     onChange={(e) => setPaymentOption(e.target.value)}
@@ -207,8 +190,8 @@ function PaymentVerification() {
               </div>
             </div>
 
-            {/** For Full and Installment Payments, show bank details and amount fields **/}
-            {(paymentOption === "full" || paymentOption === "installment") && (
+            {/** For Full Payments, show bank details and amount fields **/}
+            {paymentOption === "full" && (
               <>
                 <div className="w-full mx-auto">
                   <div className="space-y-3 pb-4 px-4 max-w-[500px] w-full mx-auto">
@@ -298,11 +281,9 @@ function PaymentVerification() {
                     placeholder="Enter the total amount paid"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-default-500 focus:outline-none focus:ring-1 focus:ring-default-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
-                  {paymentOption === "full" && (
-                    <p className="text-xs text-gray-500">
-                      Note: For full payment, the amount must equal ₦ {order.amount}
-                    </p>
-                  )}
+                  <p className="text-xs text-gray-500">
+                    Note: For full payment, the amount must equal ₦ {order.amount}
+                  </p>
                 </div>
               </>
             )}
@@ -335,7 +316,7 @@ function PaymentVerification() {
                   onClick={handleSubmitVerification}
                   disabled={
                     isSubmitting ||
-                    ((paymentOption === "full" || paymentOption === "installment") &&
+                    (paymentOption === "full" &&
                       (!selectedBank || !payeeName || !amountPaid)) ||
                     (paymentOption === "delivery" && !deliveryPerson)
                   }
