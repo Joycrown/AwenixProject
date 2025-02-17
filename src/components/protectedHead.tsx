@@ -37,7 +37,7 @@ function ProtectedHeader() {
     <header className="max-w-[1200px] w-[95%] py-4 mx-auto relative">
       <nav className="flex justify-between max-container items-center">
         <Link className="relative z-10" to="/account/home">
-          <img src={logo} alt="Awenix logo" width={"20px"} height={"20px"} />
+          <img src={logo} alt="Awenix logo" width={"30px"} height={"30px"} />
         </Link>
 
         <div className="flex gap-3 items-center w-full max-w-80 justify-end">

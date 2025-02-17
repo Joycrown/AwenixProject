@@ -21,7 +21,7 @@ function Footer() {
     <footer className="flex flex-col bg-default-100">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:flex justify-between text-default-800 max-w-[1200px] w-[95%] mx-auto py-16">
         <div className="flex flex-col max-md:items-center">
-          <h3 className="text-2xl font-bold py-3">Awenix Farm Nigeria</h3>
+          <h3 className="text-2xl font-bold py-3">Awenix AgroAllied Services</h3>
           <p className="py-3">Subscribe</p>
           <form className="relative py-3 flex items-center max-w-64 md:max-w-60">
             <input
@@ -45,7 +45,7 @@ function Footer() {
             href="mailto: awenixnigerialimited@gmail.com"
             className="underline-none py-3"
           >
-            awenixnigerialimited@gmail.com
+            awenixagroalliedservices@gmail.com
           </a>
           <a href="tel: +234 805 515 1903" className="underline-none py-3">
             +234 805 515 1903
@@ -135,7 +135,7 @@ function Footer() {
       <div className="w-full text-center">
         <hr className="w-full bg-default-700 border-1" />
         <p className="text-default-800 text-xs p-3">
-          &copy; Copyright Awenix 2024. All rights reserved
+          &copy; Copyright Awenix 2025. All rights reserved
         </p>
       </div>
     </footer>
