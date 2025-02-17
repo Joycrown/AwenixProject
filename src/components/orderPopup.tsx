@@ -221,7 +221,7 @@ function OrderPopup({ order, closeFn}: OrderPopupProps) {
             onClick={handleReorder}
             className="bg-default-500 text-white py-3 px-4 cursor-pointer rounded text-xs"
           >
-            Re-order now
+            Re-order same feed
           </div>
         </div>
       </div>

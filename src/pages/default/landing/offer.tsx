@@ -7,8 +7,8 @@ function OfferSection() {
   const offers = [
     {
       icon: TbTruckDelivery,
-      title: "FREE AND FAST DELIVERY",
-      text: "Free delivery for all orders",
+      title: "FAST AND RELIABLE SERVICE",
+      text: "We offer a 100% full-service guarantee",
     },
     {
       icon: MdOutlineHeadphones,
