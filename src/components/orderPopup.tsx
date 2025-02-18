@@ -11,6 +11,7 @@ interface ReorderItem {
   size?: string;
 }
 
+
 interface OrderPopupProps {
   order: orderProps;
   closeFn: () => void;
@@ -32,7 +33,8 @@ function OrderPopup({ order, closeFn}: OrderPopupProps) {
   // Calculate miscellaneous fee (if any) from a sample item
   const miscItem = items.find(item => item.miscellaneous != null);
   const miscellaneousValue = miscItem ? miscItem.miscellaneous : 0;
-  const miscellaneousPercentage = 10; // cost per KG for milling service
+  const millingPriceFromLS = localStorage.getItem("millingPrice");
+  const miscellaneousPercentage = millingPriceFromLS !== null ? parseFloat(millingPriceFromLS) : 10; // cost per KG for milling service
   const miscellaneousQuantity = miscellaneousValue / miscellaneousPercentage;
 
   const getPaymentMethodLabel = (option: string): string => {

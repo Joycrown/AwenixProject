@@ -94,7 +94,11 @@ function Cart() {
         const ms = item.services.find(
           (s) => s.name.toLowerCase().includes("milling") && s.selected
         );
-        if (ms) return ms;
+        if (ms) {
+          // Save the milling price to localStorage (convert to string)
+          localStorage.setItem("millingPrice", ms.price.toString());
+          return ms;
+        }
       }
     }
     return null;

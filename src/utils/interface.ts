@@ -69,3 +69,16 @@ export interface userProps {
   name: string;
   isLogged: boolean
 }
+
+
+export interface ServiceOut {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;
+  created_by: string;
+  last_edited_by?: string;
+  created_at: string;
+  updated_at: string;
+  removed: boolean;
+}
