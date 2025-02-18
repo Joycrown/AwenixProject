@@ -170,9 +170,12 @@ function CustomOrder() {
 
 
   const changeQuantity = (currentValue: string, id: number) => {
+    // Calculate the actual index in the full products array
+    const actualIndex = (page - 1) * pageMax + id;
+    
     setProducts((prev) =>
       prev.map((value, index) => {
-        if (index !== id) return value;
+        if (index !== actualIndex) return value;
   
         // Always update the display value while typing
         const updatedProduct = { ...value, displayValue: currentValue };
@@ -215,18 +218,24 @@ function CustomOrder() {
 };
 
 const addProduct = (id: number) => {
+  // Calculate the actual index in the full products array
+  const actualIndex = (page - 1) * pageMax + id;
+  
   setProducts((prev) =>
     prev.map((value, index) =>
-      index === id ? { ...value, hidden: false, quantity: 0, displayValue: "" } : value
+      index === actualIndex ? { ...value, hidden: false, quantity: 0, displayValue: "" } : value
     )
   );
 };
 
 // Update the removeProduct function
 const removeProduct = (id: number) => {
+  // Calculate the actual index in the full products array
+  const actualIndex = (page - 1) * pageMax + id;
+  
   setProducts((prev) =>
     prev.map((value, index) =>
-      index === id ? { ...value, hidden: true, quantity: 0, displayValue: "" } : value
+      index === actualIndex ? { ...value, hidden: true, quantity: 0, displayValue: "" } : value
     )
   );
 };
