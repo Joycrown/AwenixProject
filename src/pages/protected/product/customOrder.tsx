@@ -497,7 +497,7 @@ const removeProduct = (id: number) => {
                   }
                   className="underline underline-offset-8 cursor-pointer ml-auto"
                 >
-                  Next &gt;&gt;
+                  Next to see all products &gt;&gt;
                 </span>
               )}
             </div>
