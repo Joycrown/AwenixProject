@@ -42,7 +42,7 @@ function Footer() {
             <br /> Akufo Farm Settlement
           </address>
           <a
-            href="mailto: awenixnigerialimited@gmail.com"
+            href="mailto: awenixagroalliedservices@gmail.com"
             className="underline-none py-3"
           >
             awenixagroalliedservices@gmail.com
