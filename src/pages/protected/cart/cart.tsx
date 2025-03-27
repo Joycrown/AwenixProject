@@ -165,7 +165,7 @@ function Cart() {
 
     axios
       .post(
-        `${endpoint}/orders`,
+        `${endpoint}/create_orders`,
         { items: [...postData], miscellaneous: totalMilling },
         {
           data: { items: [...postData], miscellaneous: totalMilling },
