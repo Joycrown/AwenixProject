@@ -25,7 +25,7 @@ function PaymentVerification() {
   const bankAccounts = [
     { bank: "Stanbic Bank", accountNumber: "9201591101" },
     { bank: "FCMB Bank", accountNumber: "3300994010" },
-    { bank: "First Bank", accountNumber: "2029027152" },
+    { bank: "Moniepoint", accountNumber: "5976366722"},
   ];
 
   useEffect(() => {
