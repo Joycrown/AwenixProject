@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Cart.tsx
 import { useEffect, useState } from "react";
 import { productProps } from "../../../utils/interface";
@@ -41,10 +42,40 @@ function Cart() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const productParam = params.get("product");
-
+    
     if (productParam) {
+      console.log(productParam)
       const products = JSON.parse(decodeURIComponent(productParam));
-      setCartItems(products);
+      console.log(products)
+      
+      // Find milling service item if it exists
+      const millingItem = products.find((item: any) => 
+        item.name.toLowerCase().includes("milling")
+      );
+      
+      // Filter out the milling service from regular products
+      const regularProducts = products.filter((item: any) => 
+        !item.name.toLowerCase().includes("milling")
+      );
+      
+      // If milling service exists, add it as a service to the first product
+      if (millingItem && regularProducts.length > 0) {
+        // Store milling price in localStorage
+        localStorage.setItem("millingPrice", millingItem.price.toString());
+        
+        // Add milling service to the first product
+        regularProducts[0] = {
+          ...regularProducts[0],
+          services: [{
+            id: 1,
+            name: millingItem.name,
+            price: millingItem.price,
+            selected: true
+          }]
+        };
+      }
+      
+      setCartItems(regularProducts);
     } else {
       navigate("/account/home");
     }
@@ -80,9 +111,15 @@ function Cart() {
   // If an item has size "bag", it contributes 25 KG per unit.
   const calculateTotalQuantityInKg = () => {
     return cartItems.reduce((acc, item) => {
-      if ("size" in item && item.size.toLowerCase() === "bag") {
+      // For items with size "bag", count as 25kg per unit
+      if ("size" in item && item.size?.toLowerCase() === "bag") {
         return acc + item.quantity * 25;
       }
+      // For custom items without size, count as 1kg per unit
+      if ("isCustom" in item && (!item.size || item.size.toLowerCase() !== "bag")) {
+        return acc + item.quantity;
+      }
+      // For regular items, count as 1kg per unit
       return acc + item.quantity;
     }, 0);
   };
