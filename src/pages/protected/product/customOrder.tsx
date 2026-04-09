@@ -60,9 +60,9 @@ function CustomOrder() {
   useEffect(() => {
     setLoading(true);
 
-    // Fetch milling service
+    // Fetch all services
     axios
-      .get<Service>(`${endpoint}/services/name/milling`, {
+      .get<Service[]>(`${endpoint}/services/`, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
         },
@@ -71,16 +71,16 @@ function CustomOrder() {
         const savedServices = localStorage.getItem(SERVICES_STORAGE_KEY);
         if (savedServices) {
           const parsedServices = JSON.parse(savedServices);
-          setServices([
-            {
-              ...res.data,
+          setServices(
+            res.data.map((service) => ({
+              ...service,
               selected: parsedServices.some(
-                (s: Service) => s.id === res.data.id && s.selected === true
+                (s: Service) => s.id === service.id && s.selected === true
               ),
-            },
-          ]);
+            }))
+          );
         } else {
-          setServices([{ ...res.data, selected: false }]);
+          setServices(res.data.map((service) => ({ ...service, selected: false })));
         }
       })
       .catch(console.error);

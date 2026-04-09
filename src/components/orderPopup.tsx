@@ -1,6 +1,9 @@
 import { MdClose } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 import { orderProps } from "../utils/interface"; // Ensure this interface includes order_items, custom_order_items, and payment
+import { useAuthContext } from "../utils/authContext";
 
 // Define a type for items to be passed on reorder
 interface ReorderItem {
@@ -20,6 +23,9 @@ interface OrderPopupProps {
 
 function OrderPopup({ order, closeFn}: OrderPopupProps) {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const endpoint = import.meta.env.VITE_AWENIX_BACKEND_URL;
+  const [reordering, setReordering] = useState(false);
   
   
 
@@ -34,8 +40,8 @@ function OrderPopup({ order, closeFn}: OrderPopupProps) {
   const miscItem = items.find(item => item.miscellaneous != null);
   const miscellaneousValue = miscItem ? miscItem.miscellaneous : 0;
   const millingPriceFromLS = localStorage.getItem("millingPrice");
-  const miscellaneousPercentage = millingPriceFromLS !== null ? parseFloat(millingPriceFromLS) : 10; // cost per KG for milling service
-  const miscellaneousQuantity = miscellaneousValue / miscellaneousPercentage;
+  const miscellaneousPercentage = millingPriceFromLS !== null ? parseFloat(millingPriceFromLS) : 10;
+  const miscellaneousQuantity = miscellaneousPercentage > 0 ? miscellaneousValue / miscellaneousPercentage : 0;
 
   const getPaymentMethodLabel = (option: string): string => {
     switch (option) {
@@ -50,37 +56,64 @@ function OrderPopup({ order, closeFn}: OrderPopupProps) {
     }
   };
 
-  const handleReorder = () => {
-    // Build a list of reorder items of type ReorderItem.
-    const orderList: ReorderItem[] = [
-      ...order.order_items.map(({ quantity, product }) => ({
-        name: product.name,
-        price: product.price,
-        quantity,
-      })),
-      ...order.custom_order_items.map(({ product_name, quantity, size }) => ({
-        name: product_name,
-        price: 0, // Default price or compute if available
-        quantity,
-        isCustom: true,
-        size: size || "kg", // Default to "kg" if not provided
-      })),
-    ];
+  const handleReorder = async () => {
+    setReordering(true);
+    try {
+      // Fetch current prices from the API
+      const [productsRes, servicesRes] = await Promise.all([
+        axios.get(`${endpoint}/products?search=`, {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        }),
+        axios.get(`${endpoint}/services/`, {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        }),
+      ]);
 
-    // Treat miscellaneous as the milling service.
-    // Append a milling service item only if a miscellaneous fee exists.
-    if (miscellaneousValue > 0) {
-      orderList.push({
-        name: "Milling Service",
-        price: miscellaneousPercentage, // cost per KG
-        quantity: miscellaneousQuantity, // calculated total KG
-        isCustom: true,
-        size: "kg",
-      });
+      const currentProducts = productsRes.data;
+      const currentServices = servicesRes.data;
+
+      // Build order list using current prices, falling back to old price if product was removed
+      const orderList: ReorderItem[] = [
+        ...order.order_items.map(({ quantity, product_id, product }) => {
+          const fresh = currentProducts.find((p: { id: number; price: number }) => p.id === product_id);
+          return {
+            name: product.name,
+            price: fresh ? fresh.price : product.price,
+            quantity,
+          };
+        }),
+        ...order.custom_order_items.map(({ product_name, quantity, size }) => ({
+          name: product_name,
+          price: 0,
+          quantity,
+          isCustom: true,
+          size: size || "kg",
+        })),
+      ];
+
+      // Add milling service at its current price if it was part of the original order
+      if (miscellaneousValue > 0) {
+        const millingService = currentServices.find((s: { name: string; price: number }) =>
+          s.name.toLowerCase().includes("milling")
+        );
+        if (millingService) {
+          orderList.push({
+            name: millingService.name,
+            price: millingService.price,
+            quantity: miscellaneousValue / millingService.price,
+            isCustom: true,
+            size: "kg",
+          });
+        }
+      }
+
+      const queryString = `?product=${encodeURIComponent(JSON.stringify(orderList))}`;
+      navigate(`/account/cart${queryString}`);
+    } catch (error) {
+      console.error("Failed to fetch current prices for reorder:", error);
+    } finally {
+      setReordering(false);
     }
-
-    const queryString = `?product=${encodeURIComponent(JSON.stringify(orderList))}`;
-    navigate(`/account/cart${queryString}`);
   };
 
 
@@ -220,10 +253,10 @@ function OrderPopup({ order, closeFn}: OrderPopupProps) {
         {/* Re-order Button */}
         <div className="flex gap-3 mt-4">
           <div
-            onClick={handleReorder}
-            className="bg-default-500 text-white py-3 px-4 cursor-pointer rounded text-xs"
+            onClick={reordering ? undefined : handleReorder}
+            className={`bg-default-500 text-white py-3 px-4 rounded text-xs ${reordering ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
           >
-            Re-order same feed
+            {reordering ? "Loading..." : "Re-order same feed"}
           </div>
         </div>
       </div>
