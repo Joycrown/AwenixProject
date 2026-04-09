@@ -7,6 +7,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 const DefaultRoutes = lazy(() => import("./layout/defaultRoutes"));
 const ProtectedRoutes = lazy(() => import("./layout/protectedRoutes"));
 
+
 // Routes
 import {
   AboutPage,
